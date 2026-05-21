@@ -1,0 +1,26 @@
+{
+  "provinces": [
+    { "id": "buenos-aires", "name": "Buenos Aires" },
+    { "id": "cordoba", "name": "Córdoba" },
+    { "id": "santa-fe", "name": "Santa Fe" },
+    { "id": "mendoza", "name": "Mendoza" }
+  ],
+  "channels": [
+    {
+      "id": "tv-publica",
+      "provinceId": "buenos-aires",
+      "name": "TV Pública",
+      "streamUrl": "https://ythls.armelin.one/channel/UC9p2T8L9N4fWvS-G8aM6L7w.m3u8",
+      "category": "General",
+      "isFta": true
+    },
+    {
+      "id": "canal-10-cordoba",
+      "provinceId": "cordoba",
+      "name": "Canal 10 Córdoba",
+      "streamUrl": "https://vdo.mbtv.com.ar/c10/live/playlist.m3u8",
+      "category": "General",
+      "isFta": true
+    }
+  ]
+}
