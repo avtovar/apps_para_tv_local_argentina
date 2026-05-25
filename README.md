@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Argentina TV Live
 
-## Getting Started
+Aplicación web para ver canales de TV argentinos en vivo. Noticias, entretenimiento y más desde todas las provincias.
 
-First, run the development server:
+## Canales disponibles
+
+| Canal | Provincia | Fuentes |
+|-------|-----------|---------|
+| TV Pública | Buenos Aires | Señal directa |
+| A24 | Buenos Aires | Señal directa + YouTube |
+| C5N | Buenos Aires | Señal directa + YouTube |
+| Crónica TV | Buenos Aires | Señal directa + YouTube |
+| TN | Buenos Aires | Señal directa + YouTube |
+| Telefe | Buenos Aires | Señal directa |
+| Canal 10 | Córdoba | Señal directa |
+| Canal 12 | Córdoba | Señal directa |
+| Canal 3 Rosario | Santa Fe | Señal directa |
+| Canal 9 Litoral | Santa Fe | Señal directa |
+| Canal 7 | Mendoza | Señal directa |
+| Canal 11 Paraná | Entre Ríos | Señal directa |
+| Canal 10 | Tucumán | Señal directa |
+
+## Cómo ejecutar
+
+### Requisitos
+
+- Node.js 18+
+- npm
+
+### Pasos
+
+1. Instalar dependencias:
+   ```bash
+   npm install
+   ```
+
+2. Iniciar el servidor de desarrollo:
+   ```bash
+   npm run dev
+   ```
+
+3. Abrir [http://localhost    :3000](http://localhost:3000) en el navegador.
+
+4. Navegar a **Explorar Canales** para ver la grilla.
+
+### Variables de entorno (opcionales)
+
+Copiar `.env.example` a `.env.local`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variable | Descripción |
+|----------|-------------|
+| `NEXT_PUBLIC_YOUTUBE_API_KEY` | API Key de YouTube Data API v3 para obtener info de streams |
+| `NEXT_PUBLIC_TVPLAN_API_KEY` | API Key de tv-plan.org para guía de programación (EPG) |
+| `NEXT_PUBLIC_FIREBASE_*` | Configuración de Firebase para auth (opcional) |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Sin las variables de entorno la app funciona en **modo demo** con datos de ejemplo.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Build de producción
 
-## Learn More
+```bash
+npm run build
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Funcionalidades
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Grilla de canales por provincia
+- Reproductor de video con soporte HLS
+- Alternativa YouTube para canales que transmiten en ambas plataformas
+- Navegación por teclado (flechas + Enter) para TV remoto
+- Guía de programación (EPG) vía tv-plan.org
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Stack
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js](https://nextjs.org) 16
+- [React](https://react.dev) 19
+- [Tailwind CSS](https://tailwindcss.com) 4
+- [Video.js](https://videojs.com)
+- [Firebase](https://firebase.google.com) (opcional)
+- [Lucide Icons](https://lucide.dev)

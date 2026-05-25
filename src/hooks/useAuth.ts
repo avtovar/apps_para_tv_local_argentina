@@ -20,8 +20,8 @@ export function useAuth() {
     }
   }, []);
 
-  const login = async () => console.log("Login disabled in Demo Mode");
-  const signup = async () => console.log("Signup disabled in Demo Mode");
+  const login = async (_email?: string, _password?: string) => console.log("Login disabled in Demo Mode");
+  const signup = async (_email?: string, _password?: string) => console.log("Signup disabled in Demo Mode");
   const logout = async () => console.log("Logout disabled in Demo Mode");
 
   return { user, loading, login, signup, logout };

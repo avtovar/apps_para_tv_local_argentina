@@ -22,10 +22,18 @@ export interface Channel {
   provinceId: string;
   name: string;
   streamUrl: string;
+  youtubeUrl?: string;
   logoUrl?: string;
   category: string;
   isFta: boolean;
   currentProgram?: Program;
+}
+
+export interface YouTubeChannelInfo {
+  channelId: string;
+  title: string;
+  thumbnailUrl: string;
+  isLive: boolean;
 }
 
 export interface UserMetric {

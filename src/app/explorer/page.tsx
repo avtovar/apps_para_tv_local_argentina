@@ -8,7 +8,10 @@ import { trackChannelView } from '@/services/metricsService';
 import { useAuth } from '@/hooks/useAuth';
 import { useDPadNavigation } from '@/hooks/useDPadNavigation';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
-import { Tv, MapPin, ChevronRight, Play, LogOut, User as UserIcon, Clock } from 'lucide-react';
+import { YouTubePlayer } from '@/components/player/YouTubePlayer';
+import { getYouTubeEmbedUrl } from '@/services/youtubeService';
+import { YouTubeIcon } from '@/components/YouTubeIcon';
+import { Tv, MapPin, ChevronRight, Play, LogOut, Radio } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
@@ -28,6 +31,7 @@ export default function ChannelExplorer() {
   const [schedule, setSchedule] = useState<Program[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
   const [currentChannel, setCurrentChannel] = useState<Channel | null>(null);
+  const [useYouTube, setUseYouTube] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -61,6 +65,7 @@ export default function ChannelExplorer() {
       }
     }
     fetchSchedule();
+    setUseYouTube(false);
   }, [currentChannel]);
 
   const filteredChannels = selectedProvince 
@@ -69,6 +74,14 @@ export default function ChannelExplorer() {
 
   const currentProgram = schedule[0];
   const nextProgram = schedule[1];
+
+  const youtubeEmbedUrl = currentChannel?.youtubeUrl
+    ? getYouTubeEmbedUrl(currentChannel.youtubeUrl)
+    : null;
+
+  function handleToggleSource() {
+    setUseYouTube((prev) => !prev);
+  }
 
   if (loading || authLoading) {
     return (
@@ -146,8 +159,45 @@ export default function ChannelExplorer() {
         <section className="bg-gray-900 p-4 lg:p-8 flex flex-col lg:flex-row gap-8 items-start justify-center shrink-0">
           {currentChannel ? (
             <>
-              <div className="w-full lg:w-2/3 aspect-video bg-black rounded-xl shadow-2xl overflow-hidden ring-1 ring-gray-800">
-                <VideoPlayer src={currentChannel.streamUrl} />
+              <div className="w-full lg:w-2/3 flex flex-col gap-2">
+                <div className="aspect-video bg-black rounded-xl shadow-2xl overflow-hidden ring-1 ring-gray-800">
+                  {useYouTube && youtubeEmbedUrl ? (
+                    <YouTubePlayer embedUrl={youtubeEmbedUrl} />
+                  ) : (
+                    <VideoPlayer src={currentChannel.streamUrl} />
+                  )}
+                </div>
+                {currentChannel.youtubeUrl && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleToggleSource}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all focus:outline-none ring-2",
+                        useYouTube
+                          ? "bg-red-600 text-white ring-red-400"
+                          : "bg-gray-800 text-gray-400 ring-transparent hover:bg-gray-700"
+                      )}
+                    >
+                      <YouTubeIcon className="w-3.5 h-3.5" />
+                      YouTube
+                    </button>
+                    <button
+                      onClick={handleToggleSource}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all focus:outline-none ring-2",
+                        !useYouTube
+                          ? "bg-blue-600 text-white ring-blue-400"
+                          : "bg-gray-800 text-gray-400 ring-transparent hover:bg-gray-700"
+                      )}
+                    >
+                      <Radio className="w-3.5 h-3.5" />
+                      Directo
+                    </button>
+                    <span className="text-xs text-gray-500 ml-auto">
+                      {useYouTube ? "Transmitiendo vía YouTube" : "Transmitiendo vía señal directa"}
+                    </span>
+                  </div>
+                )}
               </div>
               
               <div className="w-full lg:w-1/3 flex flex-col gap-4">
@@ -208,6 +258,12 @@ export default function ChannelExplorer() {
                 <div className="absolute bottom-0 left-0 right-0 p-3 z-20 text-left">
                   <p className="font-bold text-sm truncate">{channel.name}</p>
                   <p className="text-xs text-gray-500 truncate">{channel.category}</p>
+                  {channel.youtubeUrl && (
+                    <span className="inline-flex items-center gap-1 mt-1 text-[10px] text-red-400 font-semibold">
+                      <YouTubeIcon className="w-2.5 h-2.5" />
+                      YouTube
+                    </span>
+                  )}
                 </div>
 
                 <div className={cn(

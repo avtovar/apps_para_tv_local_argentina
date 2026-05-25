@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, doc, setDoc } from "firebase/firestore";
-import sampleData from "../../skills/argentina-tv-manager/assets/sample_data.json";
+import sampleData from "../../../skills/argentina-tv-manager/assets/sample_data.json";
 
 export default function SetupPage() {
   const [status, setStatus] = useState("Esperando para iniciar...");
@@ -19,7 +19,7 @@ export default function SetupPage() {
 
       // Subir Canales
       for (const channel of sampleData.channels) {
-        await setDoc(doc(doc(db, "channels", channel.id).path), channel);
+        await setDoc(doc(db as any, "channels", channel.id), channel as any);
         setStatus(`Canal subido: ${channel.name}`);
       }
 

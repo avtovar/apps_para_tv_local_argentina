@@ -3,7 +3,9 @@
     { "id": "buenos-aires", "name": "Buenos Aires" },
     { "id": "cordoba", "name": "Córdoba" },
     { "id": "santa-fe", "name": "Santa Fe" },
-    { "id": "mendoza", "name": "Mendoza" }
+    { "id": "mendoza", "name": "Mendoza" },
+    { "id": "entre-rios", "name": "Entre Ríos" },
+    { "id": "tucuman", "name": "Tucumán" }
   ],
   "channels": [
     {
@@ -15,10 +17,102 @@
       "isFta": true
     },
     {
+      "id": "a24",
+      "provinceId": "buenos-aires",
+      "name": "A24",
+      "streamUrl": "https://ythls.armelin.one/channel/UCR9120YBAqMfntqgRTKmkjQ.m3u8",
+      "youtubeUrl": "https://www.youtube.com/live/ArKbAx1K-2U",
+      "category": "Noticias",
+      "isFta": true
+    },
+    {
+      "id": "c5n",
+      "provinceId": "buenos-aires",
+      "name": "C5N",
+      "streamUrl": "https://ythls.armelin.one/channel/UCFgk2Q2mVO1BklRQhSv6p0w.m3u8",
+      "youtubeUrl": "https://www.youtube.com/live/VWhQ6xspnSc",
+      "category": "Noticias",
+      "isFta": true
+    },
+    {
+      "id": "cronica-tv",
+      "provinceId": "buenos-aires",
+      "name": "Crónica TV",
+      "streamUrl": "https://ythls.armelin.one/channel/UC9q1fN1iN-s7Fe-6lA8Bp4g.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@CronicaTV",
+      "category": "Noticias",
+      "isFta": true
+    },
+    {
+      "id": "tn",
+      "provinceId": "buenos-aires",
+      "name": "TN",
+      "streamUrl": "https://ythls.armelin.one/channel/UCJ4BmBQnZ3YNiGGF2LQHgoQ.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@todonoticias",
+      "category": "Noticias",
+      "isFta": true
+    },
+    {
+      "id": "telefe",
+      "provinceId": "buenos-aires",
+      "name": "Telefe",
+      "streamUrl": "https://ythls.armelin.one/channel/UC2cI8sCP5b4MkVG6hlEHlDA.m3u8",
+      "category": "General",
+      "isFta": true
+    },
+    {
       "id": "canal-10-cordoba",
       "provinceId": "cordoba",
       "name": "Canal 10 Córdoba",
       "streamUrl": "https://vdo.mbtv.com.ar/c10/live/playlist.m3u8",
+      "category": "General",
+      "isFta": true
+    },
+    {
+      "id": "canal-12-cordoba",
+      "provinceId": "cordoba",
+      "name": "Canal 12 Córdoba",
+      "streamUrl": "https://ythls.armelin.one/channel/UCzDX7fF0YIff0qj4FnYFotw.m3u8",
+      "category": "General",
+      "isFta": true
+    },
+    {
+      "id": "canal-3-santafe",
+      "provinceId": "santa-fe",
+      "name": "Canal 3 Rosario",
+      "streamUrl": "https://ythls.armelin.one/channel/UC_w_RNFs0TFFtyKBoqHw_fQ.m3u8",
+      "category": "General",
+      "isFta": true
+    },
+    {
+      "id": "canal-9-litoral",
+      "provinceId": "santa-fe",
+      "name": "Canal 9 Litoral",
+      "streamUrl": "https://ythls.armelin.one/channel/UCJ9YgM6Q8M7yv1b0n8zX2Nw.m3u8",
+      "category": "General",
+      "isFta": true
+    },
+    {
+      "id": "canal-7-mendoza",
+      "provinceId": "mendoza",
+      "name": "Canal 7 Mendoza",
+      "streamUrl": "https://ythls.armelin.one/channel/UClB1m0kYNryZxnq3OHmH8xg.m3u8",
+      "category": "General",
+      "isFta": true
+    },
+    {
+      "id": "canal-11-parana",
+      "provinceId": "entre-rios",
+      "name": "Canal 11 Paraná",
+      "streamUrl": "https://ythls.armelin.one/channel/UCk_pR0jAPIn8UGRB96SrxkA.m3u8",
+      "category": "General",
+      "isFta": true
+    },
+    {
+      "id": "canal-10-tucuman",
+      "provinceId": "tucuman",
+      "name": "Canal 10 Tucumán",
+      "streamUrl": "https://ythls.armelin.one/channel/UC11_sFv2ne2CWqLq4FyTRsQ.m3u8",
       "category": "General",
       "isFta": true
     }
