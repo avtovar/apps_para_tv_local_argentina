@@ -9,19 +9,11 @@
   ],
   "channels": [
     {
-      "id": "tv-publica",
-      "provinceId": "buenos-aires",
-      "name": "TV Pública",
-      "streamUrl": "https://ythls.armelin.one/channel/UC9p2T8L9N4fWvS-G8aM6L7w.m3u8",
-      "category": "General",
-      "isFta": true
-    },
-    {
       "id": "a24",
       "provinceId": "buenos-aires",
       "name": "A24",
-      "streamUrl": "https://ythls.armelin.one/channel/UCR9120YBAqMfntqgRTKmkjQ.m3u8",
       "youtubeUrl": "https://www.youtube.com/live/ArKbAx1K-2U",
+      "logoUrl": "https://pnglogo.com/data/uploads/free-png-uploads/2016/01/a24-logo-png.png",
       "category": "Noticias",
       "isFta": true
     },
@@ -29,8 +21,8 @@
       "id": "c5n",
       "provinceId": "buenos-aires",
       "name": "C5N",
-      "streamUrl": "https://ythls.armelin.one/channel/UCFgk2Q2mVO1BklRQhSv6p0w.m3u8",
       "youtubeUrl": "https://www.youtube.com/live/VWhQ6xspnSc",
+      "logoUrl": "https://media.licdn.com/dms/image/C4E0BAQFl9F8H4hPFqQ/company-logo_200_200/0?e=2147483647&v=beta&t=z-c_e5Y5t5m0n0u0v0w0x0y0z0a0b0c0d0e",
       "category": "Noticias",
       "isFta": true
     },
@@ -38,8 +30,8 @@
       "id": "cronica-tv",
       "provinceId": "buenos-aires",
       "name": "Crónica TV",
-      "streamUrl": "https://ythls.armelin.one/channel/UC9q1fN1iN-s7Fe-6lA8Bp4g.m3u8",
-      "youtubeUrl": "https://www.youtube.com/@CronicaTV",
+      "youtubeUrl": "https://www.youtube.com/@CronicaTV/live",
+      "logoUrl": "https://cronicatv.com.ar/assets/cronicatv_logo.png",
       "category": "Noticias",
       "isFta": true
     },
@@ -47,8 +39,8 @@
       "id": "tn",
       "provinceId": "buenos-aires",
       "name": "TN",
-      "streamUrl": "https://ythls.armelin.one/channel/UCJ4BmBQnZ3YNiGGF2LQHgoQ.m3u8",
-      "youtubeUrl": "https://www.youtube.com/@todonoticias",
+      "youtubeUrl": "https://www.youtube.com/@todonoticias/live",
+      "logoUrl": "https://tn.com.ar/_next/static/media/tn-logo.svg",
       "category": "Noticias",
       "isFta": true
     },
@@ -56,7 +48,17 @@
       "id": "telefe",
       "provinceId": "buenos-aires",
       "name": "Telefe",
-      "streamUrl": "https://ythls.armelin.one/channel/UC2cI8sCP5b4MkVG6hlEHlDA.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@telefe/live",
+      "logoUrl": "https://www.telefe.com/images/logo-telefe.png",
+      "category": "General",
+      "isFta": true
+    },
+    {
+      "id": "tv-publica",
+      "provinceId": "buenos-aires",
+      "name": "TV Pública",
+      "youtubeUrl": "https://www.youtube.com/@televisionpublica/live",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Television_Publica_Argentina.svg/1200px-Television_Publica_Argentina.svg.png",
       "category": "General",
       "isFta": true
     },
@@ -64,7 +66,8 @@
       "id": "canal-10-cordoba",
       "provinceId": "cordoba",
       "name": "Canal 10 Córdoba",
-      "streamUrl": "https://vdo.mbtv.com.ar/c10/live/playlist.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@Canal10Cordoba/live",
+      "logoUrl": "https://canal10cordoba.com.ar/images/logo.png",
       "category": "General",
       "isFta": true
     },
@@ -72,7 +75,8 @@
       "id": "canal-12-cordoba",
       "provinceId": "cordoba",
       "name": "Canal 12 Córdoba",
-      "streamUrl": "https://ythls.armelin.one/channel/UCzDX7fF0YIff0qj4FnYFotw.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@Canal12Cordoba/live",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Canal_12_Córdoba.png/1200px-Canal_12_Córdoba.png",
       "category": "General",
       "isFta": true
     },
@@ -80,7 +84,8 @@
       "id": "canal-3-santafe",
       "provinceId": "santa-fe",
       "name": "Canal 3 Rosario",
-      "streamUrl": "https://ythls.armelin.one/channel/UC_w_RNFs0TFFtyKBoqHw_fQ.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@Canal3Rosario/live",
+      "logoUrl": "https://canal3rosario.com.ar/images/logo.png",
       "category": "General",
       "isFta": true
     },
@@ -88,7 +93,8 @@
       "id": "canal-9-litoral",
       "provinceId": "santa-fe",
       "name": "Canal 9 Litoral",
-      "streamUrl": "https://ythls.armelin.one/channel/UCJ9YgM6Q8M7yv1b0n8zX2Nw.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@Canal9Litoral/live",
+      "logoUrl": "https://canal9litoral.com.ar/images/logo.png",
       "category": "General",
       "isFta": true
     },
@@ -96,7 +102,8 @@
       "id": "canal-7-mendoza",
       "provinceId": "mendoza",
       "name": "Canal 7 Mendoza",
-      "streamUrl": "https://ythls.armelin.one/channel/UClB1m0kYNryZxnq3OHmH8xg.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@Canal7Mendoza/live",
+      "logoUrl": "https://canal7mendoza.com.ar/images/logo.png",
       "category": "General",
       "isFta": true
     },
@@ -104,7 +111,8 @@
       "id": "canal-11-parana",
       "provinceId": "entre-rios",
       "name": "Canal 11 Paraná",
-      "streamUrl": "https://ythls.armelin.one/channel/UCk_pR0jAPIn8UGRB96SrxkA.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@Canal11Parana/live",
+      "logoUrl": "https://canal11parana.com.ar/images/logo.png",
       "category": "General",
       "isFta": true
     },
@@ -112,7 +120,8 @@
       "id": "canal-10-tucuman",
       "provinceId": "tucuman",
       "name": "Canal 10 Tucumán",
-      "streamUrl": "https://ythls.armelin.one/channel/UC11_sFv2ne2CWqLq4FyTRsQ.m3u8",
+      "youtubeUrl": "https://www.youtube.com/@Canal10Tucuman/live",
+      "logoUrl": "https://canal10tucuman.com.ar/images/logo.png",
       "category": "General",
       "isFta": true
     }

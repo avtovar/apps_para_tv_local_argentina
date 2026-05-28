@@ -7,11 +7,10 @@ import { getChannelSchedule } from '@/services/epgService';
 import { trackChannelView } from '@/services/metricsService';
 import { useAuth } from '@/hooks/useAuth';
 import { useDPadNavigation } from '@/hooks/useDPadNavigation';
-import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { YouTubePlayer } from '@/components/player/YouTubePlayer';
 import { getYouTubeEmbedUrl } from '@/services/youtubeService';
 import { YouTubeIcon } from '@/components/YouTubeIcon';
-import { Tv, MapPin, ChevronRight, Play, LogOut, Radio } from 'lucide-react';
+import { Tv, MapPin, ChevronRight, Play, LogOut } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
@@ -31,7 +30,6 @@ export default function ChannelExplorer() {
   const [schedule, setSchedule] = useState<Program[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
   const [currentChannel, setCurrentChannel] = useState<Channel | null>(null);
-  const [useYouTube, setUseYouTube] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -65,7 +63,6 @@ export default function ChannelExplorer() {
       }
     }
     fetchSchedule();
-    setUseYouTube(false);
   }, [currentChannel]);
 
   const filteredChannels = selectedProvince 
@@ -78,10 +75,6 @@ export default function ChannelExplorer() {
   const youtubeEmbedUrl = currentChannel?.youtubeUrl
     ? getYouTubeEmbedUrl(currentChannel.youtubeUrl)
     : null;
-
-  function handleToggleSource() {
-    setUseYouTube((prev) => !prev);
-  }
 
   if (loading || authLoading) {
     return (
@@ -161,43 +154,14 @@ export default function ChannelExplorer() {
             <>
               <div className="w-full lg:w-2/3 flex flex-col gap-2">
                 <div className="aspect-video bg-black rounded-xl shadow-2xl overflow-hidden ring-1 ring-gray-800">
-                  {useYouTube && youtubeEmbedUrl ? (
-                    <YouTubePlayer embedUrl={youtubeEmbedUrl} />
-                  ) : (
-                    <VideoPlayer src={currentChannel.streamUrl} />
-                  )}
+                  {youtubeEmbedUrl && <YouTubePlayer embedUrl={youtubeEmbedUrl} />}
                 </div>
-                {currentChannel.youtubeUrl && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleToggleSource}
-                      className={cn(
-                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all focus:outline-none ring-2",
-                        useYouTube
-                          ? "bg-red-600 text-white ring-red-400"
-                          : "bg-gray-800 text-gray-400 ring-transparent hover:bg-gray-700"
-                      )}
-                    >
-                      <YouTubeIcon className="w-3.5 h-3.5" />
-                      YouTube
-                    </button>
-                    <button
-                      onClick={handleToggleSource}
-                      className={cn(
-                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all focus:outline-none ring-2",
-                        !useYouTube
-                          ? "bg-blue-600 text-white ring-blue-400"
-                          : "bg-gray-800 text-gray-400 ring-transparent hover:bg-gray-700"
-                      )}
-                    >
-                      <Radio className="w-3.5 h-3.5" />
-                      Directo
-                    </button>
-                    <span className="text-xs text-gray-500 ml-auto">
-                      {useYouTube ? "Transmitiendo vía YouTube" : "Transmitiendo vía señal directa"}
-                    </span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 text-xs text-red-400 font-semibold px-3 py-1.5 bg-gray-800 rounded-lg">
+                    <YouTubeIcon className="w-3.5 h-3.5" />
+                    Vía YouTube
+                  </span>
+                </div>
               </div>
               
               <div className="w-full lg:w-1/3 flex flex-col gap-4">
@@ -238,40 +202,46 @@ export default function ChannelExplorer() {
             {selectedProvince ? provinces.find(p => p.id === selectedProvince)?.name : "Todos los Canales"}
           </h3>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 pb-20">
             {filteredChannels.map((channel) => (
               <button
                 key={channel.id}
                 ref={(el) => register(`chan-${channel.id}`, el)}
                 onClick={() => setCurrentChannel(channel)}
                 className={cn(
-                  "group relative aspect-video bg-gray-900 rounded-lg overflow-hidden border-2 transition-all focus:outline-none",
-                  focusedId === `chan-${channel.id}` ? "ring-4 ring-blue-500 border-blue-500 scale-105 z-10" : "border-transparent",
-                  currentChannel?.id === channel.id ? "bg-blue-900/20" : ""
+                  "group relative aspect-square bg-gray-900 rounded-lg overflow-hidden border-2 transition-all focus:outline-none hover:scale-105",
+                  focusedId === `chan-${channel.id}` ? "ring-4 ring-blue-500 border-blue-500 scale-110 z-10" : "border-transparent",
+                  currentChannel?.id === channel.id ? "bg-blue-900/30" : ""
                 )}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
-                <div className="absolute inset-0 flex items-center justify-center text-4xl opacity-10">
-                  <Tv />
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
+                
+                {channel.logoUrl ? (
+                  <img 
+                    src={channel.logoUrl} 
+                    alt={channel.name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-20">
+                    <Tv />
+                  </div>
+                )}
                 
                 <div className="absolute bottom-0 left-0 right-0 p-3 z-20 text-left">
-                  <p className="font-bold text-sm truncate">{channel.name}</p>
-                  <p className="text-xs text-gray-500 truncate">{channel.category}</p>
-                  {channel.youtubeUrl && (
-                    <span className="inline-flex items-center gap-1 mt-1 text-[10px] text-red-400 font-semibold">
-                      <YouTubeIcon className="w-2.5 h-2.5" />
-                      YouTube
-                    </span>
-                  )}
+                  <p className="font-bold text-sm truncate leading-tight">{channel.name}</p>
+                  <p className="text-xs text-gray-300 truncate">{channel.category}</p>
                 </div>
 
                 <div className={cn(
                   "absolute inset-0 flex items-center justify-center z-30 transition-all",
                   focusedId === `chan-${channel.id}` ? "opacity-100" : "opacity-0"
                 )}>
-                  <div className="bg-blue-600 rounded-full p-2 shadow-lg scale-110">
-                    <Play className="w-5 h-5 fill-current" />
+                  <div className="bg-blue-600 rounded-full p-3 shadow-lg scale-110">
+                    <Play className="w-6 h-6 fill-current" />
                   </div>
                 </div>
               </button>

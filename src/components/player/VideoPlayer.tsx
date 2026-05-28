@@ -1,21 +1,31 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
+import { AlertCircle, Play } from 'lucide-react';
 
 interface VideoPlayerProps {
   src: string;
   poster?: string;
   autoplay?: boolean;
   controls?: boolean;
+  onError?: () => void;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay = true, controls = true }) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay = true, controls = true, onError }) => {
   const videoRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasPlayed, setHasPlayed] = useState(false);
+  const errorCountRef = useRef(0);
 
   useEffect(() => {
+    setError(null);
+    setIsLoading(true);
+    errorCountRef.current = 0;
+
     // Make sure Video.js player is only initialized once
     if (!playerRef.current) {
       const videoElement = document.createElement("video-js");
@@ -23,39 +33,147 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
       videoRef.current?.appendChild(videoElement);
 
       const player = playerRef.current = videojs(videoElement, {
-        autoplay,
+        autoplay: false,
         controls,
         responsive: true,
         fluid: true,
         poster,
+        inactivityTimeout: 3000,
+        playbackRates: [0.5, 1, 1.5, 2],
+        controlBar: {
+          skipButtons: {
+            forward: 10,
+            backward: 10
+          }
+        },
+        html5: {
+          hls: {
+            overrideNative: true,
+            enableLowInitialPlaylist: true,
+            smoothQualityChange: true,
+            forceSyncInterval: 0,
+            lowInitialPlaylistSize: 3,
+            bandwidth: 3000000
+          },
+          nativeControlsForTouch: true
+        },
         sources: [{
           src,
           type: 'application/x-mpegURL'
         }]
       }, () => {
-        console.log('player is ready');
+        console.log('player is ready for', src);
       });
+
+      // Track loadstart
+      player.on('loadstart', () => {
+        setIsLoading(true);
+        setError(null);
+      });
+
+      // Handle canplay - stream is ready
+      player.on('canplay', () => {
+        setIsLoading(false);
+        setError(null);
+        if (autoplay && playerRef.current) {
+          playerRef.current.play().catch((e: any) => console.log('Autoplay prevented:', e));
+        }
+      });
+
+      // Handle play
+      player.on('play', () => {
+        setError(null);
+        setIsLoading(false);
+        setHasPlayed(true);
+      });
+
+      // Handle duration change
+      player.on('durationchange', () => {
+        if (!hasPlayed && autoplay && playerRef.current) {
+          playerRef.current.play().catch((e: any) => console.log('Play prevented:', e));
+        }
+      });
+
+      // Robust error handling
+      player.on('error', () => {
+        errorCountRef.current++;
+        const errorCode = player.error();
+        if (errorCode) {
+          console.error(`Video.js Error (${errorCountRef.current}):`, errorCode.code, errorCode.message);
+          
+          // First error? Show message and trigger fallback
+          if (errorCountRef.current === 1) {
+            setIsLoading(false);
+            setError('No se pudo cargar el stream. Usando fuente alternativa...');
+            onError?.();
+          } else {
+            // Repeated errors
+            setError('El stream no está disponible en este momento');
+            setIsLoading(false);
+          }
+        }
+      });
+
+      player.on('timeupdate', () => {
+        setIsLoading(false);
+      });
+
     } else {
       const player = playerRef.current;
-      player.autoplay(autoplay);
       player.src({ src, type: 'application/x-mpegURL' });
     }
-  }, [src, videoRef]);
+
+    return () => {
+      // Cleanup when src changes
+      if (playerRef.current) {
+        errorCountRef.current = 0;
+      }
+    };
+  }, [src, autoplay, hasPlayed]);
 
   // Dispose the player on unmount
   useEffect(() => {
-    const player = playerRef.current;
     return () => {
+      const player = playerRef.current;
       if (player && !player.isDisposed()) {
         player.dispose();
         playerRef.current = null;
       }
     };
-  }, [playerRef]);
+  }, []);
+
+  const handleManualPlay = () => {
+    if (playerRef.current) {
+      playerRef.current.play().catch((e: any) => console.log('Play prevented:', e));
+    }
+  };
 
   return (
-    <div data-vjs-player className="w-full aspect-video rounded-lg overflow-hidden border-2 border-transparent focus-within:border-blue-500">
-      <div ref={videoRef} />
+    <div className="w-full aspect-video rounded-lg overflow-hidden border-2 border-transparent focus-within:border-blue-500 relative bg-black">
+      {error && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 z-50">
+          <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+          <p className="text-white text-center px-4 text-sm font-medium">{error}</p>
+          {!isLoading && (
+            <button
+              onClick={handleManualPlay}
+              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm font-semibold flex items-center gap-2 transition-colors"
+            >
+              <Play className="w-4 h-4 fill-current" />
+              Reintentar
+            </button>
+          )}
+        </div>
+      )}
+      {isLoading && !hasPlayed && !error && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-3"></div>
+          <p className="text-gray-300 text-sm">Conectando...</p>
+        </div>
+      )}
+      <div data-vjs-player className="w-full h-full">
+        <div ref={videoRef} className="w-full h-full" />
+      </div>
     </div>
   );
 };

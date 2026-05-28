@@ -21,7 +21,7 @@ export interface Channel {
   id: string;
   provinceId: string;
   name: string;
-  streamUrl: string;
+  streamUrl?: string;
   youtubeUrl?: string;
   logoUrl?: string;
   category: string;
