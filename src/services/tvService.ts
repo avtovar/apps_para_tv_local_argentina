@@ -3,6 +3,8 @@ import sampleData from "../../skills/argentina-tv-manager/assets/sample_data.jso
 
 const TDT_CHANNELS_URL = "https://www.tdtchannels.com/lists/tv.json";
 const ALPLOX_CHANNELS_URL = "https://raw.githubusercontent.com/Alplox/json-teles/refs/heads/main/canales.json";
+const IPTVO_AR_URL = "https://iptv-org.github.io/iptv/countries/ar.m3u";
+const MARCOFBB_URL = "https://raw.githubusercontent.com/marcofbb/argentina-iptv/master/argentina.m3u8";
 
 // Fallback streams con YouTube embeds como opción principal
 const FALLBACK_STREAMS: Record<string, string[]> = {
@@ -20,6 +22,42 @@ const FALLBACK_STREAMS: Record<string, string[]> = {
   ]
 };
 
+/**
+ * Basic M3U Parser
+ */
+function parseM3U(content: string, sourceId: string): Channel[] {
+  const channels: Channel[] = [];
+  const lines = content.split("\n");
+  let currentChannel: Partial<Channel> = {};
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith("#EXTINF:")) {
+      // Extract info: tvg-id, tvg-logo, group-title, name
+      const nameMatch = line.match(/,(.+)$/);
+      const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+      const groupMatch = line.match(/group-title="([^"]+)"/);
+      
+      const name = nameMatch ? nameMatch[1].trim() : "Unknown Channel";
+      currentChannel = {
+        id: `${sourceId}-${name.toLowerCase().replace(/\s+/g, '-')}`,
+        name: name,
+        logoUrl: logoMatch ? logoMatch[1] : undefined,
+        category: groupMatch ? groupMatch[1] : "General",
+        provinceId: "buenos-aires", // Default
+        isFta: true
+      };
+    } else if (line.startsWith("http")) {
+      currentChannel.streamUrl = line;
+      if (currentChannel.name) {
+        channels.push(currentChannel as Channel);
+      }
+      currentChannel = {};
+    }
+  }
+  return channels;
+}
+
 export async function getProvinces(): Promise<Province[]> {
   return sampleData.provinces as Province[];
 }
@@ -29,13 +67,16 @@ export async function getChannels(provinceId?: string): Promise<Channel[]> {
   let externalChannels: Channel[] = [];
   
   try {
-    const [tdtRes, alploxRes] = await Promise.allSettled([
+    const [tdtRes, alploxRes, iptvRes, marcoRes] = await Promise.allSettled([
       fetch(TDT_CHANNELS_URL, { signal: AbortSignal.timeout(5000) }).then(r => r.json()),
-      fetch(ALPLOX_CHANNELS_URL, { signal: AbortSignal.timeout(5000) }).then(r => r.json())
+      fetch(ALPLOX_CHANNELS_URL, { signal: AbortSignal.timeout(5000) }).then(r => r.json()),
+      fetch(IPTVO_AR_URL, { signal: AbortSignal.timeout(5000) }).then(r => r.text()),
+      fetch(MARCOFBB_URL, { signal: AbortSignal.timeout(5000) }).then(r => r.text())
     ]);
 
     // Process TDTChannels
     if (tdtRes.status === 'fulfilled' && tdtRes.value && tdtRes.value.countries) {
+      // ... (keeping existing TDT logic)
       try {
         const argentinaAmbit = tdtRes.value.countries.find((c: any) => c.name === "Argentina");
         if (argentinaAmbit && argentinaAmbit.ambits) {
@@ -62,8 +103,9 @@ export async function getChannels(provinceId?: string): Promise<Channel[]> {
       }
     }
 
-    // Process Alplox with robust check
+    // Process Alplox
     if (alploxRes.status === 'fulfilled' && alploxRes.value) {
+      // ... (keeping existing Alplox logic)
       try {
         const alploxData = alploxRes.value;
         const channelsArray = Array.isArray(alploxData) 
@@ -90,6 +132,14 @@ export async function getChannels(provinceId?: string): Promise<Channel[]> {
       } catch (err) {
         console.warn("Error processing Alplox data:", err);
       }
+    }
+
+    // Process M3U Sources
+    if (iptvRes.status === 'fulfilled') {
+      externalChannels.push(...parseM3U(iptvRes.value, "iptv-org"));
+    }
+    if (marcoRes.status === 'fulfilled') {
+      externalChannels.push(...parseM3U(marcoRes.value, "marcofbb"));
     }
 
     // Combine local and external channels, removing duplicates

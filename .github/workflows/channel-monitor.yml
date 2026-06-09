@@ -1,0 +1,28 @@
+name: Channel Health Check
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Ejecutar todos los domingos a las 00:00 UTC
+  workflow_dispatch: # Permitir ejecución manual
+
+jobs:
+  validate-streams:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Validate Local Channels
+      run: |
+        # Extraer URLs del archivo local y validarlas una por una
+        CHANNELS=$(node -e "const data = require('./skills/argentina-tv-manager/assets/sample_data.json'); data.channels.filter(c => c.streamUrl).forEach(c => console.log(c.streamUrl))")
+        
+        for url in $CHANNELS; do
+          echo "Validating: $url"
+          node .gemini/skills/argentina-tv-manager/scripts/validate_stream.cjs "$url" || echo "::warning ::Stream down: $url"
+        done

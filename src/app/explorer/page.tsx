@@ -8,9 +8,10 @@ import { trackChannelView } from '@/services/metricsService';
 import { useAuth } from '@/hooks/useAuth';
 import { useDPadNavigation } from '@/hooks/useDPadNavigation';
 import { YouTubePlayer } from '@/components/player/YouTubePlayer';
+import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { getYouTubeEmbedUrl } from '@/services/youtubeService';
 import { YouTubeIcon } from '@/components/YouTubeIcon';
-import { Tv, MapPin, ChevronRight, Play, LogOut } from 'lucide-react';
+import { Tv, MapPin, ChevronRight, Play, LogOut, Radio } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
@@ -75,6 +76,8 @@ export default function ChannelExplorer() {
   const youtubeEmbedUrl = currentChannel?.youtubeUrl
     ? getYouTubeEmbedUrl(currentChannel.youtubeUrl)
     : null;
+
+  const isHlsStream = !!currentChannel?.streamUrl;
 
   if (loading || authLoading) {
     return (
@@ -154,13 +157,28 @@ export default function ChannelExplorer() {
             <>
               <div className="w-full lg:w-2/3 flex flex-col gap-2">
                 <div className="aspect-video bg-black rounded-xl shadow-2xl overflow-hidden ring-1 ring-gray-800">
-                  {youtubeEmbedUrl && <YouTubePlayer embedUrl={youtubeEmbedUrl} />}
+                  {isHlsStream ? (
+                    <VideoPlayer src={currentChannel.streamUrl!} />
+                  ) : youtubeEmbedUrl ? (
+                    <YouTubePlayer embedUrl={youtubeEmbedUrl} />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <p className="text-gray-500">Stream no disponible</p>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 text-xs text-red-400 font-semibold px-3 py-1.5 bg-gray-800 rounded-lg">
-                    <YouTubeIcon className="w-3.5 h-3.5" />
-                    Vía YouTube
-                  </span>
+                  {isHlsStream ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-blue-400 font-semibold px-3 py-1.5 bg-gray-800 rounded-lg">
+                      <Radio className="w-3.5 h-3.5" />
+                      Stream Directo
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-xs text-red-400 font-semibold px-3 py-1.5 bg-gray-800 rounded-lg">
+                      <YouTubeIcon className="w-3.5 h-3.5" />
+                      Vía YouTube
+                    </span>
+                  )}
                 </div>
               </div>
               
@@ -198,8 +216,11 @@ export default function ChannelExplorer() {
 
         {/* Channel Grid */}
         <section className="flex-1 overflow-y-auto p-6 bg-black">
-          <h3 className="text-lg font-semibold mb-6">
+          <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
             {selectedProvince ? provinces.find(p => p.id === selectedProvince)?.name : "Todos los Canales"}
+            <span className="text-xs font-normal text-gray-500 bg-gray-900 px-2 py-1 rounded">
+              {filteredChannels.length} canales
+            </span>
           </h3>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 pb-20">
@@ -222,7 +243,7 @@ export default function ChannelExplorer() {
                     alt={channel.name}
                     className="absolute inset-0 w-full h-full object-cover"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150/111827/FFFFFF?text=' + channel.name.substring(0, 1);
                     }}
                   />
                 ) : (
@@ -231,6 +252,14 @@ export default function ChannelExplorer() {
                   </div>
                 )}
                 
+                <div className="absolute top-2 right-2 z-20">
+                  {channel.streamUrl ? (
+                    <Radio className="w-4 h-4 text-blue-500 drop-shadow-lg" />
+                  ) : (
+                    <YouTubeIcon className="w-4 h-4 text-red-500 drop-shadow-lg" />
+                  )}
+                </div>
+
                 <div className="absolute bottom-0 left-0 right-0 p-3 z-20 text-left">
                   <p className="font-bold text-sm truncate leading-tight">{channel.name}</p>
                   <p className="text-xs text-gray-300 truncate">{channel.category}</p>
