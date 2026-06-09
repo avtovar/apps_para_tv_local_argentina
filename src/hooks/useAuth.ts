@@ -17,9 +17,18 @@ export function useAuth() {
     return () => unsubscribe();
   }, [setUser]);
 
-  const login = async () => console.log("Login disabled in Demo Mode");
-  const signup = async () => console.log("Signup disabled in Demo Mode");
-  const logout = async () => console.log("Logout disabled in Demo Mode");
+  const login = async (email?: string, password?: string) => {
+    console.log("Login disabled in Demo Mode", { email, password });
+    return Promise.resolve();
+  };
+  const signup = async (email?: string, password?: string) => {
+    console.log("Signup disabled in Demo Mode", { email, password });
+    return Promise.resolve();
+  };
+  const logout = async () => {
+    console.log("Logout disabled in Demo Mode");
+    return Promise.resolve();
+  };
 
   return { user, loading, login, signup, logout };
 }
