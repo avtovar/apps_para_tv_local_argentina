@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { Province, Channel, Program } from '@/types';
 import { getProvinces, getChannels } from '@/services/tvService';
 import { getChannelSchedule } from '@/services/epgService';
-import { trackChannelView } from '@/services/metricsService';
 import { useAuth } from '@/hooks/useAuth';
 import { useDPadNavigation } from '@/hooks/useDPadNavigation';
 import { YouTubePlayer } from '@/components/player/YouTubePlayer';
@@ -14,16 +14,13 @@ import { YouTubeIcon } from '@/components/YouTubeIcon';
 import { Tv, MapPin, ChevronRight, Play, LogOut, Radio } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { useRouter } from 'next/navigation';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export default function ChannelExplorer() {
-  const { user: realUser, loading: authLoading, logout } = useAuth();
-  const user = realUser || { email: "demo@argentinatv.com", uid: "demo-user" };
-  const router = useRouter();
+  const { loading: authLoading, logout } = useAuth();
   const { register, focusedId, setFocusedId } = useDPadNavigation();
   
   const [provinces, setProvinces] = useState<Province[]>([]);
@@ -238,13 +235,13 @@ export default function ChannelExplorer() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
                 
                 {channel.logoUrl ? (
-                  <img 
-                    src={channel.logoUrl} 
+                  <Image
+                    src={channel.logoUrl}
                     alt={channel.name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150/111827/FFFFFF?text=' + channel.name.substring(0, 1);
-                    }}
+                    fill
+                    sizes="(max-width: 1024px) 50vw, 16vw"
+                    className="object-cover"
+                    unoptimized
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-20">

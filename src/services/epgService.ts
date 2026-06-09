@@ -6,7 +6,7 @@ const BASE_URL = "https://tv-plan.org/api/v1";
 export async function getChannelSchedule(channelId: string): Promise<Program[]> {
   if (!API_KEY || API_KEY === "tu_api_key_aqui") {
     // Return mock data for Demo Mode
-    return getMockSchedule(channelId);
+    return getMockSchedule();
   }
 
   try {
@@ -20,7 +20,7 @@ export async function getChannelSchedule(channelId: string): Promise<Program[]> 
   }
 }
 
-function getMockSchedule(channelId: string): Program[] {
+function getMockSchedule(): Program[] {
   const now = new Date();
   const hour = now.getHours();
   

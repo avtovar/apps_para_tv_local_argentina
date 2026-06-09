@@ -2,26 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import { auth } from '@/lib/firebase';
+import type { User } from 'firebase/auth';
 
 export function useAuth() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if auth is a mock or real
-    if (auth && typeof auth.onAuthStateChanged === 'function') {
-      const unsubscribe = auth.onAuthStateChanged((user: any) => {
-        setUser(user);
-        setLoading(false);
-      });
-      return () => unsubscribe();
-    } else {
+    const unsubscribe = auth.onAuthStateChanged((nextUser: User | null) => {
+      setUser(nextUser);
       setLoading(false);
-    }
-  }, []);
+    });
 
-  const login = async (_email?: string, _password?: string) => console.log("Login disabled in Demo Mode");
-  const signup = async (_email?: string, _password?: string) => console.log("Signup disabled in Demo Mode");
+    return () => unsubscribe();
+  }, [setUser]);
+
+  const login = async () => console.log("Login disabled in Demo Mode");
+  const signup = async () => console.log("Signup disabled in Demo Mode");
   const logout = async () => console.log("Logout disabled in Demo Mode");
 
   return { user, loading, login, signup, logout };

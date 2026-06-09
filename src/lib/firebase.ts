@@ -1,6 +1,10 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
+import { getAuth, onAuthStateChanged, type User } from "firebase/auth";
+import { getFirestore, type Firestore } from "firebase/firestore";
+
+type AuthBridge = {
+  onAuthStateChanged: (callback: (user: User | null) => void) => () => void;
+};
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "demo-key",
@@ -12,21 +16,27 @@ const firebaseConfig = {
 };
 
 // Only initialize if we have a "real-looking" key or we are forced to
-let app;
-let auth: any = null;
-let db: any = null;
-let analytics: any = null;
+let app: FirebaseApp | undefined;
+let auth: AuthBridge = {
+  onAuthStateChanged: (callback) => {
+    queueMicrotask(() => callback(null));
+    return () => {};
+  }
+};
+let db: Firestore | null = null;
+const analytics = null;
 
 try {
   if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "tu_api_key") {
     app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-    auth = getAuth(app);
+    const firebaseAuth = getAuth(app);
+    auth = {
+      onAuthStateChanged: (callback) => onAuthStateChanged(firebaseAuth, callback)
+    };
     db = getFirestore(app);
   } else {
     console.warn("[DEMO MODE] Firebase credentials missing. Using mock objects.");
-    // Mock minimal interface to avoid crashes
-    auth = { onAuthStateChanged: (cb: any) => { cb(null); return () => {}; } };
-    db = {};
+    db = null;
   }
 } catch (e) {
   console.error("Firebase init error:", e);

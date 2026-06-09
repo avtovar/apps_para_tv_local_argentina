@@ -21,7 +21,7 @@ export default function LoginPage() {
     try {
       await login(email, password);
       router.push("/explorer");
-    } catch (err: any) {
+    } catch {
       setError("Credenciales inválidas. Por favor intenta de nuevo.");
       setIsSubmitting(false);
     }

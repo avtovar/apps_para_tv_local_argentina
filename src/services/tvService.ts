@@ -1,6 +1,50 @@
 import { Channel, Province } from "@/types";
 import sampleData from "../../skills/argentina-tv-manager/assets/sample_data.json";
 
+type SampleData = {
+  provinces: Province[];
+  channels: Channel[];
+};
+
+interface TdtChannelOption {
+  url?: string;
+}
+
+interface TdtChannel {
+  name?: string;
+  logo?: string;
+  options?: TdtChannelOption[];
+}
+
+interface TdtAmbit {
+  channels?: TdtChannel[];
+}
+
+interface TdtCountry {
+  name?: string;
+  ambits?: TdtAmbit[];
+}
+
+interface TdtResponse {
+  countries?: TdtCountry[];
+}
+
+interface AlploxChannel {
+  pais?: string;
+  country?: string;
+  url?: string;
+  nombre?: string;
+  name?: string;
+  logo?: string;
+  categoria?: string;
+  category?: string;
+}
+
+type AlploxResponse = AlploxChannel[] | {
+  canales?: AlploxChannel[];
+  channels?: AlploxChannel[];
+};
+
 const TDT_CHANNELS_URL = "https://www.tdtchannels.com/lists/tv.json";
 const ALPLOX_CHANNELS_URL = "https://raw.githubusercontent.com/Alplox/json-teles/refs/heads/main/canales.json";
 const IPTVO_AR_URL = "https://iptv-org.github.io/iptv/countries/ar.m3u";
@@ -59,12 +103,12 @@ function parseM3U(content: string, sourceId: string): Channel[] {
 }
 
 export async function getProvinces(): Promise<Province[]> {
-  return sampleData.provinces as Province[];
+  return (sampleData as SampleData).provinces;
 }
 
 export async function getChannels(provinceId?: string): Promise<Channel[]> {
-  const localChannels = sampleData.channels as Channel[];
-  let externalChannels: Channel[] = [];
+  const localChannels = (sampleData as SampleData).channels;
+  const externalChannels: Channel[] = [];
   
   try {
     const [tdtRes, alploxRes, iptvRes, marcoRes] = await Promise.allSettled([
@@ -75,14 +119,15 @@ export async function getChannels(provinceId?: string): Promise<Channel[]> {
     ]);
 
     // Process TDTChannels
-    if (tdtRes.status === 'fulfilled' && tdtRes.value && tdtRes.value.countries) {
+    if (tdtRes.status === 'fulfilled') {
       // ... (keeping existing TDT logic)
       try {
-        const argentinaAmbit = tdtRes.value.countries.find((c: any) => c.name === "Argentina");
-        if (argentinaAmbit && argentinaAmbit.ambits) {
-          argentinaAmbit.ambits.forEach((ambit: any) => {
+        const tdtData = tdtRes.value as TdtResponse;
+        const argentinaAmbit = tdtData.countries?.find((country) => country.name === "Argentina");
+        if (argentinaAmbit?.ambits) {
+          argentinaAmbit.ambits.forEach((ambit) => {
             if (ambit.channels) {
-              ambit.channels.forEach((chan: any) => {
+              ambit.channels.forEach((chan) => {
                 if (chan.name && chan.options?.[0]?.url) {
                   externalChannels.push({
                     id: `tdt-${chan.name.toLowerCase().replace(/\s+/g, '-')}`,
@@ -107,16 +152,16 @@ export async function getChannels(provinceId?: string): Promise<Channel[]> {
     if (alploxRes.status === 'fulfilled' && alploxRes.value) {
       // ... (keeping existing Alplox logic)
       try {
-        const alploxData = alploxRes.value;
-        const channelsArray = Array.isArray(alploxData) 
+        const alploxData = alploxRes.value as AlploxResponse;
+        const channelsArray: AlploxChannel[] = Array.isArray(alploxData) 
           ? alploxData 
           : (alploxData.canales || alploxData.channels || []);
 
         if (Array.isArray(channelsArray)) {
-          const arChannels = channelsArray.filter((c: any) => 
-            c && (c.pais === "Argentina" || c.country === "Argentina") && c.url
+          const arChannels = channelsArray.filter((channel) => 
+            channel && (channel.pais === "Argentina" || channel.country === "Argentina") && channel.url
           );
-          arChannels.forEach((chan: any) => {
+          arChannels.forEach((chan) => {
             const channelName = chan.nombre || chan.name || 'unknown';
             externalChannels.push({
               id: `alplox-${channelName.toLowerCase().replace(/\s+/g, '-')}`,
@@ -157,7 +202,7 @@ export async function getChannels(provinceId?: string): Promise<Channel[]> {
       }
     });
 
-    let allChannels = Array.from(channelMap.values());
+    const allChannels = Array.from(channelMap.values());
     
     if (provinceId) {
       return allChannels.filter(c => c.provinceId === provinceId);

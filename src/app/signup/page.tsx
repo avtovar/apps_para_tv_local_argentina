@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Tv, Mail, Lock, Loader2, UserPlus } from "lucide-react";
+import { Mail, Lock, Loader2, UserPlus } from "lucide-react";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -28,8 +28,9 @@ export default function SignupPage() {
     try {
       await signup(email, password);
       router.push("/explorer");
-    } catch (err: any) {
-      setError(err.message.includes("email-already-in-use") 
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "";
+      setError(message.includes("email-already-in-use") 
         ? "El email ya está registrado." 
         : "Ocurrió un error al registrarse. Intenta de nuevo.");
       setIsSubmitting(false);

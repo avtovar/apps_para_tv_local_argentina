@@ -5,6 +5,8 @@ import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import { AlertCircle, Play } from 'lucide-react';
 
+type VideoJsPlayer = ReturnType<typeof videojs>;
+
 interface VideoPlayerProps {
   src: string;
   poster?: string;
@@ -15,16 +17,25 @@ interface VideoPlayerProps {
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay = true, controls = true, onError }) => {
   const videoRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<VideoJsPlayer | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasPlayed, setHasPlayed] = useState(false);
   const errorCountRef = useRef(0);
 
   useEffect(() => {
-    setError(null);
-    setIsLoading(true);
-    errorCountRef.current = 0;
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) {
+        return;
+      }
+
+      setError(null);
+      setIsLoading(true);
+      setHasPlayed(false);
+      errorCountRef.current = 0;
+    });
 
     // Make sure Video.js player is only initialized once
     if (!playerRef.current) {
@@ -76,7 +87,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
         setIsLoading(false);
         setError(null);
         if (autoplay && playerRef.current) {
-          playerRef.current.play().catch((e: any) => console.log('Autoplay prevented:', e));
+          void Promise.resolve(playerRef.current.play()).catch((playError: unknown) => console.log('Autoplay prevented:', playError));
         }
       });
 
@@ -90,7 +101,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
       // Handle duration change
       player.on('durationchange', () => {
         if (!hasPlayed && autoplay && playerRef.current) {
-          playerRef.current.play().catch((e: any) => console.log('Play prevented:', e));
+          void Promise.resolve(playerRef.current.play()).catch((playError: unknown) => console.log('Play prevented:', playError));
         }
       });
 
@@ -124,12 +135,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
     }
 
     return () => {
+      cancelled = true;
+
       // Cleanup when src changes
       if (playerRef.current) {
         errorCountRef.current = 0;
       }
     };
-  }, [src, autoplay, hasPlayed]);
+  }, [src, autoplay, hasPlayed, controls, poster, onError]);
 
   // Dispose the player on unmount
   useEffect(() => {
@@ -144,7 +157,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
 
   const handleManualPlay = () => {
     if (playerRef.current) {
-      playerRef.current.play().catch((e: any) => console.log('Play prevented:', e));
+      void Promise.resolve(playerRef.current.play()).catch((playError: unknown) => console.log('Play prevented:', playError));
     }
   };
 

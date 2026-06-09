@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { db } from "@/lib/firebase";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import sampleData from "../../../skills/argentina-tv-manager/assets/sample_data.json";
+import type { Channel, Province } from "@/types";
+
+type SampleData = {
+  provinces: Province[];
+  channels: Channel[];
+};
+
+const setupData = sampleData as SampleData;
 
 export default function SetupPage() {
   const [status, setStatus] = useState("Esperando para iniciar...");
@@ -11,22 +19,26 @@ export default function SetupPage() {
   const runSetup = async () => {
     setStatus("Subiendo datos a Firestore...");
     try {
+      if (!db) {
+        throw new Error("Firestore no está inicializado.");
+      }
+
       // Subir Provincias
-      for (const province of sampleData.provinces) {
+      for (const province of setupData.provinces) {
         await setDoc(doc(db, "provinces", province.id), province);
         setStatus(`Provincia subida: ${province.name}`);
       }
 
       // Subir Canales
-      for (const channel of sampleData.channels) {
-        await setDoc(doc(db as any, "channels", channel.id), channel as any);
+      for (const channel of setupData.channels) {
+        await setDoc(doc(db, "channels", channel.id), channel);
         setStatus(`Canal subido: ${channel.name}`);
       }
 
       setStatus("✅ Setup completado con éxito. Ya puedes ir al Explorer.");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(`❌ Error: ${error instanceof Error ? error.message : "Error desconocido"}`);
     }
   };
 

@@ -39,6 +39,6 @@ export interface YouTubeChannelInfo {
 export interface UserMetric {
   userId: string;
   channelId: string;
-  timestamp: any;
+  timestamp: unknown;
   duration: number;
 }

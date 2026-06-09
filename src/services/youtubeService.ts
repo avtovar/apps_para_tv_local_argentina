@@ -23,7 +23,7 @@ export async function getYouTubeChannelInfo(url: string): Promise<YouTubeChannel
   if (!identifier) return null;
 
   if (!API_KEY || API_KEY === "tu_youtube_api_key") {
-    return getMockChannelInfo(identifier, url);
+    return getMockChannelInfo(identifier);
   }
 
   try {
@@ -36,7 +36,7 @@ export async function getYouTubeChannelInfo(url: string): Promise<YouTubeChannel
     if (!response.ok) throw new Error("YouTube API error");
 
     const data = await response.json();
-    if (!data.items?.[0]) return getMockChannelInfo(identifier, url);
+    if (!data.items?.[0]) return getMockChannelInfo(identifier);
 
     const item = data.items[0];
     return {
@@ -46,7 +46,7 @@ export async function getYouTubeChannelInfo(url: string): Promise<YouTubeChannel
       isLive: false,
     };
   } catch {
-    return getMockChannelInfo(identifier, url);
+    return getMockChannelInfo(identifier);
   }
 }
 
@@ -81,7 +81,7 @@ export function getYouTubeEmbedUrl(url: string): string | null {
   return null;
 }
 
-function getMockChannelInfo(identifier: string, url: string): YouTubeChannelInfo {
+function getMockChannelInfo(identifier: string): YouTubeChannelInfo {
   return {
     channelId: identifier,
     title: "",
