@@ -20,13 +20,13 @@ export async function getChannelSchedule(channelId: string): Promise<Program[]> 
   }
 }
 
-function getMockSchedule(): Program[] {
+function getMockSchedule(channelId?: string): Program[] {
   const now = new Date();
   const hour = now.getHours();
   
   return [
     {
-      title: `Noticiero de las ${hour}:00`,
+      title: channelId ? `${channelId.toUpperCase()} - Noticiero de las ${hour}:00` : `Noticiero de las ${hour}:00`,
       start: new Date(now.setMinutes(0)).toISOString(),
       end: new Date(now.setMinutes(60)).toISOString(),
       description: "Las noticias más importantes de Argentina y el mundo.",
