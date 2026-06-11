@@ -159,14 +159,14 @@ export default function ChannelExplorer() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Player Section */}
-        <section className="bg-gray-900 p-4 lg:p-8 flex flex-col lg:flex-row gap-8 items-start justify-center shrink-0">
+      <main className="flex-1 flex flex-col overflow-hidden bg-black">
+        {/* Player Section: Ahora ocupa todo el espacio disponible */}
+        <section className="flex-1 p-4 lg:p-6 flex flex-col lg:flex-row gap-6 items-stretch justify-center overflow-hidden">
           {currentChannel ? (
             <>
-              <div className="w-full lg:w-2/3 flex flex-col gap-2">
+              <div className="flex-1 flex flex-col gap-4 min-h-0">
                 <div 
-                  className="aspect-video bg-black rounded-xl shadow-2xl overflow-hidden ring-1 ring-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-500"
+                  className="flex-1 bg-black rounded-2xl shadow-2xl overflow-hidden ring-1 ring-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-500 relative"
                   tabIndex={0}
                   ref={(el) => register('player-container', el, 'player')}
                 >
@@ -176,119 +176,68 @@ export default function ChannelExplorer() {
                     <YouTubePlayer embedUrl={youtubeEmbedUrl} />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <p className="text-gray-500">Stream no disponible</p>
+                      <p className="text-gray-500 font-medium">Stream no disponible</p>
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
-                  {isHlsStream ? (
-                    <span className="inline-flex items-center gap-1 text-xs text-blue-400 font-semibold px-3 py-1.5 bg-gray-800 rounded-lg">
-                      <Radio className="w-3.5 h-3.5" />
-                      Stream Directo
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-xs text-red-400 font-semibold px-3 py-1.5 bg-gray-800 rounded-lg">
-                      <YouTubeIcon className="w-3.5 h-3.5" />
-                      Vía YouTube
-                    </span>
-                  )}
+                
+                {/* Info Bar debajo del reproductor */}
+                <div className="flex items-center justify-between px-2 shrink-0">
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-2xl font-bold truncate">{currentChannel.name}</h2>
+                    {isHlsStream ? (
+                      <span className="inline-flex items-center gap-1.5 text-[10px] text-blue-400 font-bold px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md uppercase tracking-wider">
+                        <Radio className="w-3 h-3" />
+                        Directo
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-[10px] text-red-400 font-bold px-2 py-1 bg-red-500/10 border border-red-500/20 rounded-md uppercase tracking-wider">
+                        <YouTubeIcon className="w-3 h-3" />
+                        YouTube
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-blue-500 font-bold text-sm">{currentChannel.category}</p>
                 </div>
               </div>
               
-              <div className="w-full lg:w-1/3 flex flex-col gap-4">
-                <div className="p-6 bg-gray-950 rounded-xl border border-gray-800 h-full">
-                  <h2 className="text-2xl font-bold mb-1 truncate">{currentChannel.name}</h2>
-                  <p className="text-blue-500 font-medium mb-4">{currentChannel.category}</p>
+              {/* EPG / Programación Lateral (Opcional, ahora más compacta) */}
+              <div className="w-full lg:w-80 flex flex-col gap-4 shrink-0">
+                <div className="flex-1 p-6 bg-gray-950 rounded-2xl border border-gray-800 flex flex-col">
+                  <h3 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-6">Programación</h3>
                   
-                  {currentProgram && (
-                    <div className="mb-4 p-4 bg-blue-600/10 border border-blue-500/30 rounded-lg">
-                      <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase mb-2">
+                  {currentProgram ? (
+                    <div className="mb-8">
+                      <div className="flex items-center gap-2 text-blue-400 text-[10px] font-bold uppercase mb-3">
                         <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-                        En Vivo
+                        Ahora
                       </div>
-                      <h3 className="text-lg font-bold line-clamp-1">{currentProgram.title}</h3>
-                      <p className="text-gray-400 text-sm mt-1 line-clamp-2">{currentProgram.description}</p>
+                      <h3 className="text-lg font-bold leading-tight mb-2">{currentProgram.title}</h3>
+                      <p className="text-gray-400 text-sm line-clamp-4 leading-relaxed">{currentProgram.description}</p>
+                    </div>
+                  ) : (
+                    <div className="flex-1 flex items-center justify-center border border-dashed border-gray-800 rounded-xl mb-8">
+                      <p className="text-gray-600 text-xs italic">Cargando guía...</p>
                     </div>
                   )}
 
                   {nextProgram && (
-                    <div className="opacity-60">
-                      <h4 className="text-gray-500 text-xs font-bold uppercase mb-2">Siguiente</h4>
-                      <h5 className="font-semibold text-sm truncate">{nextProgram.title}</h5>
+                    <div className="pt-6 border-t border-gray-900 mt-auto">
+                      <h4 className="text-gray-500 text-[10px] font-bold uppercase mb-3">Siguiente</h4>
+                      <h5 className="font-bold text-sm text-gray-200 line-clamp-2">{nextProgram.title}</h5>
                     </div>
                   )}
                 </div>
               </div>
             </>
           ) : (
-            <div className="w-full h-64 bg-gray-950 flex items-center justify-center rounded-xl border border-dashed border-gray-700">
-              <p className="text-gray-500">Selecciona un canal</p>
+            <div className="flex-1 flex items-center justify-center bg-gray-950 rounded-2xl border border-dashed border-gray-800 m-4">
+              <div className="text-center">
+                <Tv className="w-16 h-16 text-gray-800 mx-auto mb-4" />
+                <p className="text-gray-500 font-medium">Selecciona un canal de la guía lateral</p>
+              </div>
             </div>
           )}
-        </section>
-
-        {/* Channel Grid */}
-        <section className="flex-1 overflow-y-auto p-6 bg-black">
-          <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
-            {selectedProvince ? provinces.find(p => p.id === selectedProvince)?.name : "Todos los Canales"}
-            <span className="text-xs font-normal text-gray-500 bg-gray-900 px-2 py-1 rounded">
-              {filteredChannels.length} canales
-            </span>
-          </h3>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 pb-20">
-            {filteredChannels.map((channel) => (
-              <button
-                key={channel.id}
-                ref={(el) => register(`chan-${channel.id}`, el, 'grid')}
-                onClick={() => setCurrentChannel(channel)}
-                className={cn(
-                  "group relative aspect-square bg-gray-900 rounded-lg overflow-hidden border-2 transition-all focus:outline-none hover:scale-105",
-                  focusedId === `chan-${channel.id}` ? "ring-4 ring-blue-500 border-blue-500 scale-110 z-10" : "border-transparent",
-                  currentChannel?.id === channel.id ? "bg-blue-900/30" : ""
-                )}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
-                
-                {channel.logoUrl ? (
-                  <Image
-                    src={channel.logoUrl}
-                    alt={channel.name}
-                    fill
-                    sizes="(max-width: 1024px) 50vw, 16vw"
-                    className="object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-20">
-                    <Tv />
-                  </div>
-                )}
-                
-                <div className="absolute top-2 right-2 z-20">
-                  {channel.streamUrl ? (
-                    <Radio className="w-4 h-4 text-blue-500 drop-shadow-lg" />
-                  ) : (
-                    <YouTubeIcon className="w-4 h-4 text-red-500 drop-shadow-lg" />
-                  )}
-                </div>
-
-                <div className="absolute bottom-0 left-0 right-0 p-3 z-20 text-left">
-                  <p className="font-bold text-sm truncate leading-tight">{channel.name}</p>
-                  <p className="text-xs text-gray-300 truncate">{channel.category}</p>
-                </div>
-
-                <div className={cn(
-                  "absolute inset-0 flex items-center justify-center z-30 transition-all",
-                  focusedId === `chan-${channel.id}` ? "opacity-100" : "opacity-0"
-                )}>
-                  <div className="bg-blue-600 rounded-full p-3 shadow-lg scale-110">
-                    <Play className="w-6 h-6 fill-current" />
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
         </section>
       </main>
     </div>
