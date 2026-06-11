@@ -21,21 +21,13 @@ export default function Home() {
         className="mt-10 px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl text-lg font-bold transition-colors focus:outline-none focus:ring-4 focus:ring-blue-500 inline-flex items-center gap-3"
       >
         <Tv className="w-6 h-6" />
-        Explorar Canales
+        Entrar a la App
       </Link>
 
-      <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <Link href="/explorer" className="p-8 border border-gray-800 rounded-xl bg-gray-900/50 hover:border-blue-500 transition-colors">
-          <h2 className="text-2xl font-semibold mb-4 text-blue-400">Buenos Aires</h2>
-          <p className="text-gray-400">A24, C5N, TN, Telefe, Crónica TV y más.</p>
-        </Link>
-        <Link href="/explorer" className="p-8 border border-gray-800 rounded-xl bg-gray-900/50 hover:border-blue-500 transition-colors">
-          <h2 className="text-2xl font-semibold mb-4 text-blue-400">Córdoba</h2>
-          <p className="text-gray-400">Canal 10, Canal 12 y toda la programación cordobesa.</p>
-        </Link>
-        <Link href="/explorer" className="p-8 border border-gray-800 rounded-xl bg-gray-900/50 hover:border-blue-500 transition-colors">
-          <h2 className="text-2xl font-semibold mb-4 text-blue-400">Santa Fe</h2>
-          <p className="text-gray-400">Canal 3 Rosario, Canal 9 Litoral y más.</p>
+      <div className="mt-20 grid grid-cols-1 gap-8 w-full max-w-xl">
+        <Link href="/explorer" className="p-8 border border-gray-800 rounded-xl bg-gray-900/50 hover:border-blue-500 transition-colors text-center">
+          <h2 className="text-2xl font-semibold mb-4 text-blue-400">Canales Nacionales</h2>
+          <p className="text-gray-400">TN, LN+, C5N, A24, Crónica, Canal 26 y más.</p>
         </Link>
       </div>
 

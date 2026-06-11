@@ -21,7 +21,7 @@ function cn(...inputs: ClassValue[]) {
 
 export default function ChannelExplorer() {
   const { loading: authLoading, logout } = useAuth();
-  const { register, focusedId, setFocusedId } = useDPadNavigation();
+  const { register, focusedId, setFocusedId, focusElement } = useDPadNavigation();
   
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -42,7 +42,8 @@ export default function ChannelExplorer() {
         if (chans.length > 0) {
           const firstChan = chans[0];
           setCurrentChannel(firstChan);
-          setFocusedId(`chan-${firstChan.id}`);
+          // Small timeout to ensure element is registered
+          setTimeout(() => focusElement(`chan-${firstChan.id}`), 100);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -51,7 +52,7 @@ export default function ChannelExplorer() {
       }
     }
     init();
-  }, [setFocusedId]);
+  }, [focusElement]);
 
   useEffect(() => {
     async function fetchSchedule() {
@@ -62,6 +63,19 @@ export default function ChannelExplorer() {
     }
     fetchSchedule();
   }, [currentChannel]);
+
+  // When province changes, focus first channel in the filtered list
+  useEffect(() => {
+    if (!loading && channels.length > 0) {
+      const filtered = selectedProvince 
+        ? channels.filter(c => c.provinceId === selectedProvince)
+        : channels;
+      
+      if (filtered.length > 0) {
+        setTimeout(() => focusElement(`chan-${filtered[0].id}`), 50);
+      }
+    }
+  }, [selectedProvince, channels, loading, focusElement]);
 
   const filteredChannels = selectedProvince 
     ? channels.filter(c => c.provinceId === selectedProvince)
@@ -89,60 +103,58 @@ export default function ChannelExplorer() {
 
   return (
     <div className="flex h-screen bg-black text-white overflow-hidden">
-      {/* Sidebar: Provincias */}
-      <aside className="w-64 border-r border-gray-800 bg-gray-950 flex flex-col shrink-0">
+      {/* Sidebar: Guía de Canales */}
+      <aside className="w-72 border-r border-gray-800 bg-gray-950 flex flex-col shrink-0">
         <div className="p-6 flex-1 overflow-y-auto" ref={sidebarRef}>
           <h1 className="text-xl font-bold flex items-center gap-2 mb-8">
-            <Tv className="text-blue-500" /> Argentina TV
+            <Tv className="text-blue-500" /> Guía de Canales
           </h1>
           
           <nav className="space-y-2">
-            <button
-              ref={(el) => register('prov-all', el)}
-              onClick={() => setSelectedProvince(null)}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all focus:outline-none ring-blue-500",
-                focusedId === 'prov-all' ? "ring-4 bg-gray-800" : "",
-                !selectedProvince ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-900"
-              )}
-            >
-              <MapPin className="w-4 h-4" />
-              <span>Todas</span>
-            </button>
-            
-            {provinces.map((prov) => (
+            {channels.map((channel) => (
               <button
-                key={prov.id}
-                ref={(el) => register(`prov-${prov.id}`, el)}
-                onClick={() => setSelectedProvince(prov.id)}
+                key={channel.id}
+                ref={(el) => register(`side-chan-${channel.id}`, el, 'sidebar')}
+                onClick={() => setCurrentChannel(channel)}
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all focus:outline-none ring-blue-500",
-                  focusedId === `prov-${prov.id}` ? "ring-4 bg-gray-800" : "",
-                  selectedProvince === prov.id ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-900"
+                  "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all focus:outline-none ring-blue-500 text-left",
+                  focusedId === `side-chan-${channel.id}` ? "ring-4 bg-gray-800" : "",
+                  currentChannel?.id === channel.id ? "bg-blue-600/20 border border-blue-500/50" : "text-gray-400 hover:bg-gray-900"
                 )}
               >
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4" />
-                  <span>{prov.name}</span>
+                <div className="relative w-10 h-10 shrink-0 bg-gray-900 rounded-md overflow-hidden border border-gray-800">
+                  {channel.logoUrl ? (
+                    <Image
+                      src={channel.logoUrl}
+                      alt={channel.name}
+                      fill
+                      className="object-contain p-1"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-gray-700">
+                      <Tv className="w-5 h-5" />
+                    </div>
+                  )}
                 </div>
-                <ChevronRight className="w-4 h-4 opacity-50" />
+                <div className="overflow-hidden">
+                  <p className={cn(
+                    "font-bold text-sm truncate",
+                    currentChannel?.id === channel.id ? "text-white" : ""
+                  )}>
+                    {channel.name}
+                  </p>
+                  <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">
+                    {channel.category}
+                  </p>
+                </div>
               </button>
             ))}
           </nav>
         </div>
 
         <div className="p-4 border-t border-gray-800 bg-gray-900/50">
-          <button
-            ref={(el) => register('btn-logout', el)}
-            onClick={() => logout()}
-            className={cn(
-              "w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors focus:outline-none ring-red-500",
-              focusedId === 'btn-logout' ? "ring-4 bg-red-500/20" : ""
-            )}
-          >
-            <LogOut className="w-4 h-4" />
-            Cerrar Sesión
-          </button>
+          <p className="text-xs text-gray-500 text-center">Argentina TV Live v1.0</p>
         </div>
       </aside>
 
@@ -153,7 +165,11 @@ export default function ChannelExplorer() {
           {currentChannel ? (
             <>
               <div className="w-full lg:w-2/3 flex flex-col gap-2">
-                <div className="aspect-video bg-black rounded-xl shadow-2xl overflow-hidden ring-1 ring-gray-800">
+                <div 
+                  className="aspect-video bg-black rounded-xl shadow-2xl overflow-hidden ring-1 ring-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-500"
+                  tabIndex={0}
+                  ref={(el) => register('player-container', el, 'player')}
+                >
                   {isHlsStream ? (
                     <VideoPlayer src={currentChannel.streamUrl!} />
                   ) : youtubeEmbedUrl ? (
@@ -224,7 +240,7 @@ export default function ChannelExplorer() {
             {filteredChannels.map((channel) => (
               <button
                 key={channel.id}
-                ref={(el) => register(`chan-${channel.id}`, el)}
+                ref={(el) => register(`chan-${channel.id}`, el, 'grid')}
                 onClick={() => setCurrentChannel(channel)}
                 className={cn(
                   "group relative aspect-square bg-gray-900 rounded-lg overflow-hidden border-2 transition-all focus:outline-none hover:scale-105",

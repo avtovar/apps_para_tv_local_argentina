@@ -108,110 +108,13 @@ export async function getProvinces(): Promise<Province[]> {
 
 export async function getChannels(provinceId?: string): Promise<Channel[]> {
   const localChannels = (sampleData as SampleData).channels;
-  const externalChannels: Channel[] = [];
   
-  try {
-    const [tdtRes, alploxRes, iptvRes, marcoRes] = await Promise.allSettled([
-      fetch(TDT_CHANNELS_URL, { signal: AbortSignal.timeout(5000) }).then(r => r.json()),
-      fetch(ALPLOX_CHANNELS_URL, { signal: AbortSignal.timeout(5000) }).then(r => r.json()),
-      fetch(IPTVO_AR_URL, { signal: AbortSignal.timeout(5000) }).then(r => r.text()),
-      fetch(MARCOFBB_URL, { signal: AbortSignal.timeout(5000) }).then(r => r.text())
-    ]);
-
-    // Process TDTChannels
-    if (tdtRes.status === 'fulfilled') {
-      // ... (keeping existing TDT logic)
-      try {
-        const tdtData = tdtRes.value as TdtResponse;
-        const argentinaAmbit = tdtData.countries?.find((country) => country.name === "Argentina");
-        if (argentinaAmbit?.ambits) {
-          argentinaAmbit.ambits.forEach((ambit) => {
-            if (ambit.channels) {
-              ambit.channels.forEach((chan) => {
-                if (chan.name && chan.options?.[0]?.url) {
-                  externalChannels.push({
-                    id: `tdt-${chan.name.toLowerCase().replace(/\s+/g, '-')}`,
-                    provinceId: "buenos-aires",
-                    name: chan.name,
-                    streamUrl: chan.options[0].url,
-                    logoUrl: chan.logo,
-                    category: "General",
-                    isFta: true
-                  });
-                }
-              });
-            }
-          });
-        }
-      } catch (err) {
-        console.warn("Error processing TDTChannels:", err);
-      }
-    }
-
-    // Process Alplox
-    if (alploxRes.status === 'fulfilled' && alploxRes.value) {
-      // ... (keeping existing Alplox logic)
-      try {
-        const alploxData = alploxRes.value as AlploxResponse;
-        const channelsArray: AlploxChannel[] = Array.isArray(alploxData) 
-          ? alploxData 
-          : (alploxData.canales || alploxData.channels || []);
-
-        if (Array.isArray(channelsArray)) {
-          const arChannels = channelsArray.filter((channel) => 
-            channel && (channel.pais === "Argentina" || channel.country === "Argentina") && channel.url
-          );
-          arChannels.forEach((chan) => {
-            const channelName = chan.nombre || chan.name || 'unknown';
-            externalChannels.push({
-              id: `alplox-${channelName.toLowerCase().replace(/\s+/g, '-')}`,
-              provinceId: "buenos-aires",
-              name: channelName,
-              streamUrl: chan.url,
-              logoUrl: chan.logo,
-              category: chan.categoria || chan.category || "General",
-              isFta: true
-            });
-          });
-        }
-      } catch (err) {
-        console.warn("Error processing Alplox data:", err);
-      }
-    }
-
-    // Process M3U Sources
-    if (iptvRes.status === 'fulfilled') {
-      externalChannels.push(...parseM3U(iptvRes.value, "iptv-org"));
-    }
-    if (marcoRes.status === 'fulfilled') {
-      externalChannels.push(...parseM3U(marcoRes.value, "marcofbb"));
-    }
-
-    // Combine local and external channels, removing duplicates
-    const channelMap = new Map<string, Channel>();
-    
-    // Add local channels first (they have priority)
-    localChannels.forEach(ch => {
-      channelMap.set(ch.id, ch);
-    });
-    
-    // Add external channels only if they don't already exist
-    externalChannels.forEach(ch => {
-      if (!channelMap.has(ch.id)) {
-        channelMap.set(ch.id, ch);
-      }
-    });
-
-    const allChannels = Array.from(channelMap.values());
-    
-    if (provinceId) {
-      return allChannels.filter(c => c.provinceId === provinceId);
-    }
-    return allChannels;
-  } catch (error) {
-    console.error("Error aggregating channels:", error);
-    return localChannels;
+  // En este modo simplificado, solo devolvemos los canales locales (YouTube)
+  // que el usuario ha solicitado específicamente.
+  if (provinceId) {
+    return localChannels.filter(c => c.provinceId === provinceId);
   }
+  return localChannels;
 }
 
 /**

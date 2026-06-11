@@ -1,19 +1,23 @@
 {
   "provinces": [
-    { "id": "buenos-aires", "name": "Buenos Aires" },
-    { "id": "cordoba", "name": "Córdoba" },
-    { "id": "santa-fe", "name": "Santa Fe" },
-    { "id": "mendoza", "name": "Mendoza" },
-    { "id": "entre-rios", "name": "Entre Ríos" },
-    { "id": "tucuman", "name": "Tucumán" }
+    { "id": "buenos-aires", "name": "Buenos Aires" }
   ],
   "channels": [
     {
-      "id": "a24",
+      "id": "tn",
       "provinceId": "buenos-aires",
-      "name": "A24",
-      "youtubeUrl": "https://www.youtube.com/live/ArKbAx1K-2U",
-      "logoUrl": "https://pnglogo.com/data/uploads/free-png-uploads/2016/01/a24-logo-png.png",
+      "name": "TN (Todo Noticias)",
+      "youtubeUrl": "https://www.youtube.com/live/XM3zil0KWyk",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Todo_Noticias_2016.svg/1200px-Todo_Noticias_2016.svg.png",
+      "category": "Noticias",
+      "isFta": true
+    },
+    {
+      "id": "ln-plus",
+      "provinceId": "buenos-aires",
+      "name": "LN+",
+      "youtubeUrl": "https://www.youtube.com/live/cb12KmMMDJA",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/La_Naci%C3%B3n%2B_logo.svg/1200px-La_Naci%C3%B3n%2B_logo.svg.png",
       "category": "Noticias",
       "isFta": true
     },
@@ -22,7 +26,16 @@
       "provinceId": "buenos-aires",
       "name": "C5N",
       "youtubeUrl": "https://www.youtube.com/live/VWhQ6xspnSc",
-      "logoUrl": "https://media.licdn.com/dms/image/C4E0BAQFl9F8H4hPFqQ/company-logo_200_200/0?e=2147483647&v=beta&t=z-c_e5Y5t5m0n0u0v0w0x0y0z0a0b0c0d0e",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/C5N_logo_2017.svg/1200px-C5N_logo_2017.svg.png",
+      "category": "Noticias",
+      "isFta": true
+    },
+    {
+      "id": "a24",
+      "provinceId": "buenos-aires",
+      "name": "A24",
+      "youtubeUrl": "https://www.youtube.com/live/ArKbAx1K-2U",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/A24_logo.svg/1200px-A24_logo.svg.png",
       "category": "Noticias",
       "isFta": true
     },
@@ -30,26 +43,26 @@
       "id": "cronica-tv",
       "provinceId": "buenos-aires",
       "name": "Crónica TV",
-      "youtubeUrl": "https://www.youtube.com/@CronicaTV/live",
-      "logoUrl": "https://cronicatv.com.ar/assets/cronicatv_logo.png",
+      "youtubeUrl": "https://www.youtube.com/live/JC7f3EUDaqw",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Cr%C3%B3nica_TV_logo_2017.svg/1200px-Cr%C3%B3nica_TV_logo_2017.svg.png",
       "category": "Noticias",
       "isFta": true
     },
     {
-      "id": "tn",
+      "id": "canal-26",
       "provinceId": "buenos-aires",
-      "name": "TN",
-      "youtubeUrl": "https://www.youtube.com/@todonoticias/live",
-      "logoUrl": "https://tn.com.ar/_next/static/media/tn-logo.svg",
+      "name": "Canal 26",
+      "youtubeUrl": "https://www.youtube.com/live/DVZ2rJQb_0g",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Canal_26_logo.svg/1200px-Canal_26_logo.svg.png",
       "category": "Noticias",
       "isFta": true
     },
     {
-      "id": "telefe",
+      "id": "el-nueve",
       "provinceId": "buenos-aires",
-      "name": "Telefe",
-      "youtubeUrl": "https://www.youtube.com/@telefe/live",
-      "logoUrl": "https://www.telefe.com/images/logo-telefe.png",
+      "name": "El Nueve",
+      "youtubeUrl": "https://www.youtube.com/live/mCvoIRBgMU0",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/El_Nueve_logo_2021.svg/1200px-El_Nueve_logo_2021.svg.png",
       "category": "General",
       "isFta": true
     },
@@ -57,71 +70,26 @@
       "id": "tv-publica",
       "provinceId": "buenos-aires",
       "name": "TV Pública",
-      "youtubeUrl": "https://www.youtube.com/@televisionpublica/live",
+      "youtubeUrl": "https://www.youtube.com/live/Td0rCxY0pRs",
       "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Television_Publica_Argentina.svg/1200px-Television_Publica_Argentina.svg.png",
       "category": "General",
       "isFta": true
     },
     {
-      "id": "canal-10-cordoba",
-      "provinceId": "cordoba",
-      "name": "Canal 10 Córdoba",
-      "youtubeUrl": "https://www.youtube.com/@Canal10Cordoba/live",
-      "logoUrl": "https://canal10cordoba.com.ar/images/logo.png",
-      "category": "General",
+      "id": "ip-noticias",
+      "provinceId": "buenos-aires",
+      "name": "IP Noticias",
+      "youtubeUrl": "https://www.youtube.com/live/JrmCaXL5GZs",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/IP_Noticias_logo.svg/1200px-IP_Noticias_logo.svg.png",
+      "category": "Noticias",
       "isFta": true
     },
     {
-      "id": "canal-12-cordoba",
-      "provinceId": "cordoba",
-      "name": "Canal 12 Córdoba",
-      "youtubeUrl": "https://www.youtube.com/@Canal12Cordoba/live",
-      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Canal_12_Córdoba.png/1200px-Canal_12_Córdoba.png",
-      "category": "General",
-      "isFta": true
-    },
-    {
-      "id": "canal-3-santafe",
-      "provinceId": "santa-fe",
-      "name": "Canal 3 Rosario",
-      "youtubeUrl": "https://www.youtube.com/@Canal3Rosario/live",
-      "logoUrl": "https://canal3rosario.com.ar/images/logo.png",
-      "category": "General",
-      "isFta": true
-    },
-    {
-      "id": "canal-9-litoral",
-      "provinceId": "santa-fe",
-      "name": "Canal 9 Litoral",
-      "youtubeUrl": "https://www.youtube.com/@Canal9Litoral/live",
-      "logoUrl": "https://canal9litoral.com.ar/images/logo.png",
-      "category": "General",
-      "isFta": true
-    },
-    {
-      "id": "canal-7-mendoza",
-      "provinceId": "mendoza",
-      "name": "Canal 7 Mendoza",
-      "youtubeUrl": "https://www.youtube.com/@Canal7Mendoza/live",
-      "logoUrl": "https://canal7mendoza.com.ar/images/logo.png",
-      "category": "General",
-      "isFta": true
-    },
-    {
-      "id": "canal-11-parana",
-      "provinceId": "entre-rios",
-      "name": "Canal 11 Paraná",
-      "youtubeUrl": "https://www.youtube.com/@Canal11Parana/live",
-      "logoUrl": "https://canal11parana.com.ar/images/logo.png",
-      "category": "General",
-      "isFta": true
-    },
-    {
-      "id": "canal-10-tucuman",
-      "provinceId": "tucuman",
-      "name": "Canal 10 Tucumán",
-      "youtubeUrl": "https://www.youtube.com/@Canal10Tucuman/live",
-      "logoUrl": "https://canal10tucuman.com.ar/images/logo.png",
+      "id": "net-tv",
+      "provinceId": "buenos-aires",
+      "name": "Net TV",
+      "youtubeUrl": "https://www.youtube.com/live/jlxikJ47LRg",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Net_TV_logo.svg/1200px-Net_TV_logo.svg.png",
       "category": "General",
       "isFta": true
     }
