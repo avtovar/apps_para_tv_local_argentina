@@ -18,8 +18,8 @@ export function useAuth() {
     setLoading(false);
   }, []);
 
-  const login = async () => Promise.resolve();
-  const signup = async () => Promise.resolve();
+  const login = async (email?: string, password?: string) => Promise.resolve();
+  const signup = async (email?: string, password?: string) => Promise.resolve();
   const logout = async () => Promise.resolve();
 
   return { user, loading, login, signup, logout };
