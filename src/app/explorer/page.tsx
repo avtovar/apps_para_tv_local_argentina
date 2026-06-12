@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Province, Channel, Program } from '@/types';
-import { getProvinces, getChannels } from '@/services/tvService';
+import { Channel, Program } from '@/types';
+import { getChannels } from '@/services/tvService';
 import { getChannelSchedule } from '@/services/epgService';
 import { useAuth } from '@/hooks/useAuth';
 import { useDPadNavigation } from '@/hooks/useDPadNavigation';
@@ -11,7 +11,7 @@ import { YouTubePlayer } from '@/components/player/YouTubePlayer';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { getYouTubeEmbedUrl } from '@/services/youtubeService';
 import { YouTubeIcon } from '@/components/YouTubeIcon';
-import { Tv, MapPin, ChevronRight, Play, LogOut, Radio } from 'lucide-react';
+import { Tv, Radio } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -20,13 +20,11 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export default function ChannelExplorer() {
-  const { loading: authLoading, logout } = useAuth();
-  const { register, focusedId, setFocusedId, focusElement } = useDPadNavigation();
+  const { loading: authLoading } = useAuth();
+  const { register, focusedId, focusElement } = useDPadNavigation();
   
-  const [provinces, setProvinces] = useState<Province[]>([]);
   const [channels, setChannels] = useState<Channel[]>([]);
   const [schedule, setSchedule] = useState<Program[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
   const [currentChannel, setCurrentChannel] = useState<Channel | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,8 +33,6 @@ export default function ChannelExplorer() {
   useEffect(() => {
     async function init() {
       try {
-        const provs = await getProvinces();
-        setProvinces(provs);
         const chans = await getChannels();
         setChannels(chans);
         if (chans.length > 0) {
@@ -63,23 +59,6 @@ export default function ChannelExplorer() {
     }
     fetchSchedule();
   }, [currentChannel]);
-
-  // When province changes, focus first channel in the filtered list
-  useEffect(() => {
-    if (!loading && channels.length > 0) {
-      const filtered = selectedProvince 
-        ? channels.filter(c => c.provinceId === selectedProvince)
-        : channels;
-      
-      if (filtered.length > 0) {
-        setTimeout(() => focusElement(`chan-${filtered[0].id}`), 50);
-      }
-    }
-  }, [selectedProvince, channels, loading, focusElement]);
-
-  const filteredChannels = selectedProvince 
-    ? channels.filter(c => c.provinceId === selectedProvince)
-    : channels;
 
   const currentProgram = schedule[0];
   const nextProgram = schedule[1];

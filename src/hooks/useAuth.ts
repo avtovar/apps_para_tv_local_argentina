@@ -1,25 +1,18 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { auth } from '@/lib/firebase';
-import type { User } from 'firebase/auth';
+import { useState } from 'react';
 
 export function useAuth() {
   // Siempre devolvemos un usuario simulado para acceso directo
-  const [user, setUser] = useState<any>({
+  const [user] = useState({
     uid: "demo-user",
     email: "invitado@argentinatv.live",
     displayName: "Invitado"
   });
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
-  useEffect(() => {
-    // No necesitamos suscribirnos a cambios de auth real
-    setLoading(false);
-  }, []);
-
-  const login = async (email?: string, password?: string) => Promise.resolve();
-  const signup = async (email?: string, password?: string) => Promise.resolve();
+  const login = async () => Promise.resolve();
+  const signup = async () => Promise.resolve();
   const logout = async () => Promise.resolve();
 
   return { user, loading, login, signup, logout };
