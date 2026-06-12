@@ -19,7 +19,7 @@ export default function LoginPage() {
     setError("");
     setIsSubmitting(true);
     try {
-      await login(email, password);
+      await login();
       router.push("/explorer");
     } catch {
       setError("Credenciales inválidas. Por favor intenta de nuevo.");

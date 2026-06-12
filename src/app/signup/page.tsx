@@ -26,7 +26,7 @@ export default function SignupPage() {
 
     setIsSubmitting(true);
     try {
-      await signup(email, password);
+      await signup();
       router.push("/explorer");
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "";
