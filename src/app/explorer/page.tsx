@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Channel, Program } from '@/types';
+import { Channel } from '@/types';
 import { getChannels } from '@/services/tvService';
-import { getChannelSchedule } from '@/services/epgService';
 import { useAuth } from '@/hooks/useAuth';
 import { useDPadNavigation } from '@/hooks/useDPadNavigation';
 import { YouTubePlayer } from '@/components/player/YouTubePlayer';
@@ -24,7 +23,6 @@ export default function ChannelExplorer() {
   const { register, focusedId, focusElement } = useDPadNavigation();
   
   const [channels, setChannels] = useState<Channel[]>([]);
-  const [schedule, setSchedule] = useState<Program[]>([]);
   const [currentChannel, setCurrentChannel] = useState<Channel | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -49,19 +47,6 @@ export default function ChannelExplorer() {
     }
     init();
   }, [focusElement]);
-
-  useEffect(() => {
-    async function fetchSchedule() {
-      if (currentChannel) {
-        const data = await getChannelSchedule(currentChannel.id);
-        setSchedule(data);
-      }
-    }
-    fetchSchedule();
-  }, [currentChannel]);
-
-  const currentProgram = schedule[0];
-  const nextProgram = schedule[1];
 
   const youtubeEmbedUrl = currentChannel?.youtubeUrl
     ? getYouTubeEmbedUrl(currentChannel.youtubeUrl)
@@ -140,75 +125,44 @@ export default function ChannelExplorer() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden bg-black">
         {/* Player Section: Ahora ocupa todo el espacio disponible */}
-        <section className="flex-1 p-4 lg:p-6 flex flex-col lg:flex-row gap-6 items-stretch justify-center overflow-hidden">
+        <section className="flex-1 p-4 lg:p-6 flex flex-col gap-6 items-stretch justify-center overflow-hidden">
           {currentChannel ? (
-            <>
-              <div className="flex-1 flex flex-col gap-4 min-h-0">
-                <div 
-                  className="flex-1 bg-black rounded-2xl shadow-2xl overflow-hidden ring-1 ring-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-500 relative"
-                  tabIndex={0}
-                  ref={(el) => register('player-container', el, 'player')}
-                >
-                  {isHlsStream ? (
-                    <VideoPlayer src={currentChannel.streamUrl!} />
-                  ) : youtubeEmbedUrl ? (
-                    <YouTubePlayer embedUrl={youtubeEmbedUrl} />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <p className="text-gray-500 font-medium">Stream no disponible</p>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Info Bar debajo del reproductor */}
-                <div className="flex items-center justify-between px-2 shrink-0">
-                  <div className="flex items-center gap-4">
-                    <h2 className="text-2xl font-bold truncate">{currentChannel.name}</h2>
-                    {isHlsStream ? (
-                      <span className="inline-flex items-center gap-1.5 text-[10px] text-blue-400 font-bold px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md uppercase tracking-wider">
-                        <Radio className="w-3 h-3" />
-                        Directo
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 text-[10px] text-red-400 font-bold px-2 py-1 bg-red-500/10 border border-red-500/20 rounded-md uppercase tracking-wider">
-                        <YouTubeIcon className="w-3 h-3" />
-                        YouTube
-                      </span>
-                    )}
+            <div className="flex-1 flex flex-col gap-4 min-h-0">
+              <div 
+                className="flex-1 bg-black rounded-2xl shadow-2xl overflow-hidden ring-1 ring-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-500 relative"
+                tabIndex={0}
+                ref={(el) => register('player-container', el, 'player')}
+              >
+                {isHlsStream ? (
+                  <VideoPlayer src={currentChannel.streamUrl!} />
+                ) : youtubeEmbedUrl ? (
+                  <YouTubePlayer embedUrl={youtubeEmbedUrl} />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <p className="text-gray-500 font-medium">Stream no disponible</p>
                   </div>
-                  <p className="text-blue-500 font-bold text-sm">{currentChannel.category}</p>
-                </div>
+                )}
               </div>
               
-              {/* EPG / Programación Lateral (Opcional, ahora más compacta) */}
-              <div className="w-full lg:w-80 flex flex-col gap-4 shrink-0">
-                <div className="flex-1 p-6 bg-gray-950 rounded-2xl border border-gray-800 flex flex-col">
-                  <h3 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-6">Programación</h3>
-                  
-                  {currentProgram ? (
-                    <div className="mb-8">
-                      <div className="flex items-center gap-2 text-blue-400 text-[10px] font-bold uppercase mb-3">
-                        <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-                        Ahora
-                      </div>
-                      <h3 className="text-lg font-bold leading-tight mb-2">{currentProgram.title}</h3>
-                      <p className="text-gray-400 text-sm line-clamp-4 leading-relaxed">{currentProgram.description}</p>
-                    </div>
+              {/* Info Bar debajo del reproductor */}
+              <div className="flex items-center justify-between px-2 shrink-0">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-2xl font-bold truncate">{currentChannel.name}</h2>
+                  {isHlsStream ? (
+                    <span className="inline-flex items-center gap-1.5 text-[10px] text-blue-400 font-bold px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md uppercase tracking-wider">
+                      <Radio className="w-3 h-3" />
+                      Directo
+                    </span>
                   ) : (
-                    <div className="flex-1 flex items-center justify-center border border-dashed border-gray-800 rounded-xl mb-8">
-                      <p className="text-gray-600 text-xs italic">Cargando guía...</p>
-                    </div>
-                  )}
-
-                  {nextProgram && (
-                    <div className="pt-6 border-t border-gray-900 mt-auto">
-                      <h4 className="text-gray-500 text-[10px] font-bold uppercase mb-3">Siguiente</h4>
-                      <h5 className="font-bold text-sm text-gray-200 line-clamp-2">{nextProgram.title}</h5>
-                    </div>
+                    <span className="inline-flex items-center gap-1.5 text-[10px] text-red-400 font-bold px-2 py-1 bg-red-500/10 border border-red-500/20 rounded-md uppercase tracking-wider">
+                      <YouTubeIcon className="w-3 h-3" />
+                      YouTube
+                    </span>
                   )}
                 </div>
+                <p className="text-blue-500 font-bold text-sm">{currentChannel.category}</p>
               </div>
-            </>
+            </div>
           ) : (
             <div className="flex-1 flex items-center justify-center bg-gray-950 rounded-2xl border border-dashed border-gray-800 m-4">
               <div className="text-center">
