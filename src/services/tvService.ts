@@ -43,10 +43,4 @@ export function getFallbackStreamUrls(channelId: string): string[] {
   return FALLBACK_STREAMS[channelId] || [];
 }
 
-/**
- * Get first fallback stream URL
- */
-export function getFallbackStreamUrl(channelId: string): string | null {
-  const urls = getFallbackStreamUrls(channelId);
-  return urls.length > 0 ? urls[0] : null;
-}
+

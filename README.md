@@ -39,7 +39,7 @@ Aplicación web para ver canales de TV argentinos en vivo. Noticias, entretenimi
    npm run dev
    ```
 
-3. Abrir [http://localhost    :3000](http://localhost:3000) en el navegador.
+3. Abrir [http://localhost    :3000](htt/localhost:3000) en el navegador.
 
 4. Navegar a **Explorar Canales** para ver la grilla.
 

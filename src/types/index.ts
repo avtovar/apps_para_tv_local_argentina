@@ -36,9 +36,4 @@ export interface YouTubeChannelInfo {
   isLive: boolean;
 }
 
-export interface UserMetric {
-  userId: string;
-  channelId: string;
-  timestamp: unknown;
-  duration: number;
-}
+

@@ -10,6 +10,7 @@ import { YouTubePlayer } from '@/components/player/YouTubePlayer';
 import { VideoPlayer } from '@/components/player/VideoPlayer';
 import { getYouTubeEmbedUrl } from '@/services/youtubeService';
 import { YouTubeIcon } from '@/components/YouTubeIcon';
+import { logger } from '@/lib/logger';
 import { Tv, Radio } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -40,7 +41,7 @@ export default function ChannelExplorer() {
           setTimeout(() => focusElement(`chan-${firstChan.id}`), 100);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        logger.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }

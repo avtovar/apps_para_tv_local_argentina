@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { logger } from "@/lib/logger";
 import sampleData from "../../../skills/argentina-tv-manager/assets/sample_data.json";
 import type { Channel, Province } from "@/types";
 
@@ -37,7 +38,7 @@ export default function SetupPage() {
 
       setStatus("✅ Setup completado con éxito. Ya puedes ir al Explorer.");
     } catch (error: unknown) {
-      console.error(error);
+      logger.error(error);
       setStatus(`❌ Error: ${error instanceof Error ? error.message : "Error desconocido"}`);
     }
   };

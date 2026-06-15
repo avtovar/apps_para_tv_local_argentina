@@ -1,4 +1,5 @@
 import { Program } from "@/types";
+import { logger } from "@/lib/logger";
 
 const API_KEY = process.env.NEXT_PUBLIC_TVPLAN_API_KEY;
 const BASE_URL = "https://tv-plan.org/api/v1";
@@ -15,7 +16,7 @@ export async function getChannelSchedule(channelId: string): Promise<Program[]> 
     const data = await response.json();
     return data.programs; // Adjust based on real API response structure
   } catch (error) {
-    console.error("EPG Fetch Error:", error);
+    logger.error("EPG Fetch Error:", error);
     return getMockSchedule(channelId);
   }
 }

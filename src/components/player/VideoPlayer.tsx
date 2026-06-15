@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
 import { AlertCircle, Play } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 type VideoJsPlayer = ReturnType<typeof videojs>;
 
@@ -73,7 +74,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
           type: 'application/x-mpegURL'
         }]
       }, () => {
-        console.log('player is ready for', src);
+        logger.log('player is ready for', src);
       });
 
       // Track loadstart
@@ -87,7 +88,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
         setIsLoading(false);
         setError(null);
         if (autoplay && playerRef.current) {
-          void Promise.resolve(playerRef.current.play()).catch((playError: unknown) => console.log('Autoplay prevented:', playError));
+          void Promise.resolve(playerRef.current.play()).catch((playError: unknown) => logger.log('Autoplay prevented:', playError));
         }
       });
 
@@ -101,7 +102,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
       // Handle duration change
       player.on('durationchange', () => {
         if (!hasPlayed && autoplay && playerRef.current) {
-          void Promise.resolve(playerRef.current.play()).catch((playError: unknown) => console.log('Play prevented:', playError));
+          void Promise.resolve(playerRef.current.play()).catch((playError: unknown) => logger.log('Play prevented:', playError));
         }
       });
 
@@ -110,7 +111,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
         errorCountRef.current++;
         const errorCode = player.error();
         if (errorCode) {
-          console.error(`Video.js Error (${errorCountRef.current}):`, errorCode.code, errorCode.message);
+          logger.error(`Video.js Error (${errorCountRef.current}):`, errorCode.code, errorCode.message);
           
           // First error? Show message and trigger fallback
           if (errorCountRef.current === 1) {
@@ -157,7 +158,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, autoplay 
 
   const handleManualPlay = () => {
     if (playerRef.current) {
-      void Promise.resolve(playerRef.current.play()).catch((playError: unknown) => console.log('Play prevented:', playError));
+      void Promise.resolve(playerRef.current.play()).catch((playError: unknown) => logger.log('Play prevented:', playError));
     }
   };
 

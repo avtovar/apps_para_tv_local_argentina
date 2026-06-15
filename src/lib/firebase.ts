@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, type User } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
+import { logger } from "./logger";
 
 type AuthBridge = {
   onAuthStateChanged: (callback: (user: User | null) => void) => () => void;
@@ -24,7 +25,6 @@ let auth: AuthBridge = {
   }
 };
 let db: Firestore | null = null;
-const analytics = null;
 
 try {
   if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "tu_api_key") {
@@ -35,11 +35,11 @@ try {
     };
     db = getFirestore(app);
   } else {
-    console.warn("[DEMO MODE] Firebase credentials missing. Using mock objects.");
+    logger.warn("[DEMO MODE] Firebase credentials missing. Using mock objects.");
     db = null;
   }
 } catch (e) {
-  console.error("Firebase init error:", e);
+  logger.error("Firebase init error:", e);
 }
 
-export { auth, db, analytics };
+export { auth, db };
